@@ -1,7 +1,10 @@
 import 'package:ecommerce_demo/details.dart';
 import 'package:ecommerce_demo/products.dart';
 import 'package:ecommerce_demo/profile.dart';
+import 'package:ecommerce_demo/signup.dart';
+import 'package:ecommerce_demo/login.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'mongodb.dart';
 
 void main() async {
@@ -18,7 +21,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List pages = [Products(), Profile()];
+  List pages = [Products(), Signup(), Login()];
   int index = 0;
   void onTapped(int tappedIndex) {
     setState(() {
@@ -31,7 +34,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       routes: {
         "/details": (context) => ProductDetails(),
-        "/search":(context) => Products()
+        "/search": (context) => Products(),
       },
       home: Scaffold(
         body: pages[index],
@@ -41,15 +44,25 @@ class _MyAppState extends State<MyApp> {
           onTap: onTapped,
           items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.search, color: Color(0xff0D4715)),
+              icon: Icon(
+                FontAwesomeIcons.magnifyingGlass,
+                color: Color(0xff0D4715),
+              ),
               backgroundColor: Color(0xffF1F0E9),
               label: "Search",
             ),
-            
             BottomNavigationBarItem(
-              icon: Icon(Icons.person, color: Color(0xff0D4715)),
+              icon: Icon(
+                Icons.signal_cellular_4_bar_outlined,
+                color: Color(0xff0D4715),
+              ),
               backgroundColor: Color(0xffF1F0E9),
-              label: "Profile",
+              label: "Sign up",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_2_rounded, color: Color(0xff0D4715)),
+              backgroundColor: Color(0xffF1F0E9),
+              label: "login",
             ),
           ],
         ),
