@@ -198,34 +198,46 @@ class _LoginState extends State<Login> {
                 ],
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Color(0xffF1F0E9),
-                  child: IconButton(
-                    icon: Icon(FontAwesomeIcons.facebook),
-                    onPressed: () {},
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Color(0xffF1F0E9),
+                    child: IconButton(
+                      icon: Icon(
+                        FontAwesomeIcons.facebook,
+                        color: Color(0xFF1877F2),
+                      ),
+                      onPressed: () {},
+                    ),
                   ),
-                ),
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Color(0xffF1F0E9),
-                  child: IconButton(
-                    icon: Icon(FontAwesomeIcons.google),
-                    onPressed: () {},
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Color(0xffF1F0E9),
+                    child: IconButton(
+                      icon: Icon(
+                        FontAwesomeIcons.apple,
+                        color: Color(0xFF000000),
+                      ),
+                      onPressed: () {},
+                    ),
                   ),
-                ),
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Color(0xffF1F0E9),
-                  child: IconButton(
-                    icon: Icon(FontAwesomeIcons.apple),
-                    onPressed: () {},
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Color(0xffF1F0E9),
+                    child: IconButton(
+                      icon: Icon(
+                        FontAwesomeIcons.google,
+                        color: Color(0xFF4285F4),
+                      ),
+                      onPressed: () {},
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

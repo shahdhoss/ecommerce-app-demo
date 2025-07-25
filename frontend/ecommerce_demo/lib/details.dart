@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:ecommerce_demo/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 
 class ProductDetails extends StatefulWidget {
@@ -48,7 +49,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                     color: Color(0xff0D4715),
                     icon: Icon(Icons.arrow_back),
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, "/search");
+                      Navigator.pushReplacementNamed(context, "/");
                     },
                   ),
                 ),
