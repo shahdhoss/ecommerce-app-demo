@@ -43,6 +43,7 @@ class _ChatWidgetState extends State<ChatWidget> {
               alignment: Alignment.topLeft,
               child: CircleAvatar(
                 backgroundColor: Color(0xffF1F0E9),
+                radius: 24,
                 child: IconButton(
                   color: Color(0xff0D4715),
                   icon: Icon(Icons.arrow_back),

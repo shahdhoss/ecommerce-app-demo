@@ -243,6 +243,37 @@ class _LoginState extends State<Login> {
                 ],
               ),
             ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 2, 0, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Don't have an account yet? ",
+                    style: TextStyle(
+                      color: Color(0xff6B8A88),
+                      fontFamily: "Poppins",
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  InkWell(
+                    child: Text(
+                      "Sign up",
+                      style: TextStyle(
+                        color: Color(0xff007AFF),
+                        fontFamily: "Poppins",
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pushNamed(context, "/signup");
+                    },
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
