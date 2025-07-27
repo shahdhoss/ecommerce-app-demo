@@ -45,13 +45,13 @@ class _ProductsState extends State<Products> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 8.0, 0, 8.0),
+              padding: const EdgeInsets.fromLTRB(16.0, 14, 0, 8.0),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   "Search",
                   style: TextStyle(
-                    fontFamily: "Roboto",
+                    fontFamily: "Poppins",
                     fontSize: 30.0,
                     fontWeight: FontWeight.bold,
                     color: Color(0xff0D4715),
@@ -162,7 +162,7 @@ class _ProductsState extends State<Products> {
                                           : titles[index],
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
-                                        fontFamily: "Roboto",
+                                        fontFamily: "Poppins",
                                         fontWeight: FontWeight.w700,
                                         color: Color(0xff0D4715),
                                         fontSize: 16.0,
@@ -184,7 +184,7 @@ class _ProductsState extends State<Products> {
                                     "\$${prices[index].toString()}",
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
-                                      fontFamily: "Roboto",
+                                      fontFamily: "Poppins",
                                       fontWeight: FontWeight.bold,
                                       color: Color(0xff0D4715),
                                       fontSize: 16.0,

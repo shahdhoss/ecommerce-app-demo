@@ -36,7 +36,7 @@ class _LoginState extends State<Login> {
                 Text(
                   "Welcome Back \n To Grocify!",
                   style: TextStyle(
-                    fontFamily: "Roboto",
+                    fontFamily: "Poppins",
                     fontSize: 35,
                     fontWeight: FontWeight.bold,
                     color: Color(0xff0D4715),
@@ -52,7 +52,7 @@ class _LoginState extends State<Login> {
                   "Email address",
                   style: TextStyle(
                     color: Color(0xff6B8A88),
-                    fontFamily: "Roboto",
+                    fontFamily: "Poppins",
                     fontSize: 15,
                     fontWeight: FontWeight.w900,
                   ),
@@ -70,7 +70,7 @@ class _LoginState extends State<Login> {
                   controller: email,
                   style: TextStyle(
                     color: Color(0xff0D4715),
-                    fontFamily: "Roboto",
+                    fontFamily: "Poppins",
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
                   ),
@@ -94,7 +94,7 @@ class _LoginState extends State<Login> {
                   "Password",
                   style: TextStyle(
                     color: Color(0xff6B8A88),
-                    fontFamily: "Roboto",
+                    fontFamily: "Poppins",
                     fontSize: 15,
                     fontWeight: FontWeight.w900,
                   ),
@@ -113,7 +113,7 @@ class _LoginState extends State<Login> {
                   controller: password,
                   style: TextStyle(
                     color: Color(0xff0D4715),
-                    fontFamily: "Roboto",
+                    fontFamily: "Poppins",
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
                   ),
@@ -161,7 +161,11 @@ class _LoginState extends State<Login> {
                   ),
                   child: Text(
                     "Login",
-                    style: TextStyle(color: Colors.white, fontSize: 15),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -183,7 +187,7 @@ class _LoginState extends State<Login> {
                       "or continue with",
                       style: TextStyle(
                         color: Color(0xff6B8A88),
-                        fontFamily: "Roboto",
+                        fontFamily: "Poppins",
                         fontSize: 14,
                         fontWeight: FontWeight.w800,
                       ),

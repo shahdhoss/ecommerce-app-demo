@@ -25,7 +25,7 @@ class _SignupState extends State<Signup> {
       body: Padding(
         padding: EdgeInsets.fromLTRB(
           26,
-          MediaQuery.of(context).size.height * 0.1,
+          MediaQuery.of(context).size.height * 0.07,
           26,
           20,
         ),
@@ -35,9 +35,9 @@ class _SignupState extends State<Signup> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  "Welcome To Grocify!",
+                  "Welcome To \n Grocify!",
                   style: TextStyle(
-                    fontFamily: "Roboto",
+                    fontFamily: "Poppins",
                     fontSize: 35,
                     fontWeight: FontWeight.bold,
                     color: Color(0xff0D4715),
@@ -53,7 +53,7 @@ class _SignupState extends State<Signup> {
                   "Full Name",
                   style: TextStyle(
                     color: Color(0xff6B8A88),
-                    fontFamily: "Roboto",
+                    fontFamily: "Poppins",
                     fontSize: 15,
                     fontWeight: FontWeight.w900,
                   ),
@@ -71,7 +71,7 @@ class _SignupState extends State<Signup> {
                   controller: name,
                   style: TextStyle(
                     color: Color(0xff0D4715),
-                    fontFamily: "Roboto",
+                    fontFamily: "Poppins",
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
                   ),
@@ -95,7 +95,7 @@ class _SignupState extends State<Signup> {
                   "Email address",
                   style: TextStyle(
                     color: Color(0xff6B8A88),
-                    fontFamily: "Roboto",
+                    fontFamily: "Poppins",
                     fontSize: 15,
                     fontWeight: FontWeight.w900,
                   ),
@@ -113,7 +113,7 @@ class _SignupState extends State<Signup> {
                   controller: email,
                   style: TextStyle(
                     color: Color(0xff0D4715),
-                    fontFamily: "Roboto",
+                    fontFamily: "Poppins",
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
                   ),
@@ -137,7 +137,7 @@ class _SignupState extends State<Signup> {
                   "Password",
                   style: TextStyle(
                     color: Color(0xff6B8A88),
-                    fontFamily: "Roboto",
+                    fontFamily: "Poppins",
                     fontSize: 15,
                     fontWeight: FontWeight.w900,
                   ),
@@ -156,7 +156,7 @@ class _SignupState extends State<Signup> {
                   controller: password,
                   style: TextStyle(
                     color: Color(0xff0D4715),
-                    fontFamily: "Roboto",
+                    fontFamily: "Poppins",
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
                   ),
@@ -204,7 +204,11 @@ class _SignupState extends State<Signup> {
                   ),
                   child: Text(
                     "Sign up",
-                    style: TextStyle(color: Colors.white, fontSize: 15),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -226,9 +230,9 @@ class _SignupState extends State<Signup> {
                       "or with",
                       style: TextStyle(
                         color: Color(0xff6B8A88),
-                        fontFamily: "Roboto",
+                        fontFamily: "Poppins",
                         fontSize: 14,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),

@@ -1,15 +1,18 @@
+import 'package:ecommerce_demo/chat.dart';
 import 'package:ecommerce_demo/details.dart';
+import 'package:ecommerce_demo/main_scaffold.dart';
 import 'package:ecommerce_demo/products.dart';
-import 'package:ecommerce_demo/profile.dart';
 import 'package:ecommerce_demo/signup.dart';
 import 'package:ecommerce_demo/login.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'mongodb.dart';
 
+const apiKey = "AIzaSyDLFaO7XWKnKa9yLHquEByr4YkmijCek9U";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await databaseConnection.connect();
+  Gemini.init(apiKey: apiKey, enableDebugging: true);
   runApp(MyApp());
 }
 
@@ -24,11 +27,13 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(scaffoldBackgroundColor: Colors.white),
       routes: {
         "/details": (context) => ProductDetails(),
-        "/": (context) => Signup(),
+        "/": (context) => MainScaffold(),
         "/login": (context) => Login(),
         "/signup": (context) => Signup(),
+        "/chat": (context) => ChatWidget(),
       },
     );
   }

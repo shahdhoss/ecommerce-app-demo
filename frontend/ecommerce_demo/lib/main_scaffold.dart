@@ -1,17 +1,19 @@
+import 'package:ecommerce_demo/details.dart';
+import 'package:ecommerce_demo/login.dart';
 import 'package:ecommerce_demo/products.dart';
 import 'package:ecommerce_demo/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({super.key});
+class MainScaffold extends StatefulWidget {
+  const MainScaffold({super.key});
 
   @override
-  State<BottomNavBar> createState() => _BottomNavBarState();
+  State<MainScaffold> createState() => _MainScaffoldState();
 }
 
-class _BottomNavBarState extends State<BottomNavBar> {
-  List pages = [Products(), Profile()];
+class _MainScaffoldState extends State<MainScaffold> {
+  List pages = [Products(), Login()];
   int index = 0;
   void onTapped(int tappedIndex) {
     setState(() {
@@ -37,12 +39,19 @@ class _BottomNavBarState extends State<BottomNavBar> {
             label: "Search",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_2_rounded, color: Color(0xff0D4715)),
+            icon: Icon(FontAwesomeIcons.user, color: Color(0xff0D4715)),
             backgroundColor: Color(0xffF1F0E9),
-            label: "Profile",
+            label: "Login",
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, "/chat");
+        },
+        child: Icon(FontAwesomeIcons.message, color: Color(0xff0D4715)),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

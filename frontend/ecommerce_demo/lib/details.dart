@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:ecommerce_demo/bottom_nav_bar.dart';
+import 'package:ecommerce_demo/main_scaffold.dart';
 import 'package:flutter/material.dart';
 
 class ProductDetails extends StatefulWidget {
@@ -37,7 +37,7 @@ class _ProductDetailsState extends State<ProductDetails> {
     data = (ModalRoute.of(context)?.settings.arguments as Map?) ?? {};
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.fromLTRB(26, 24, 26, 20),
+        padding: EdgeInsets.fromLTRB(26, 30, 26, 20),
         child: Column(
           children: [
             Row(
@@ -58,7 +58,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Color(0xff0D4715),
-                    fontFamily: "Roboto",
+                    fontFamily: "Poppins",
                     fontSize: 19.0,
                     fontWeight: FontWeight.bold,
                   ),
@@ -87,18 +87,15 @@ class _ProductDetailsState extends State<ProductDetails> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 16),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      "${data["title"]}",
-                      style: TextStyle(
-                        color: Color(0xff0D4715),
-                        fontFamily: "Roboto",
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                      ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "${data["title"]}",
+                    style: TextStyle(
+                      color: Color(0xff0D4715),
+                      fontFamily: "Poppins",
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -123,7 +120,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                     "\$${data["price"]}",
                     style: TextStyle(
                       color: Color(0xff0D4715),
-                      fontFamily: "Roboto",
+                      fontFamily: "Poppins",
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                     ),
@@ -146,7 +143,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                         "$number",
                         style: TextStyle(
                           color: Color(0xff0D4715),
-                          fontFamily: "Roboto",
+                          fontFamily: "Poppins",
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
                         ),
@@ -177,9 +174,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                         "Rapid",
                         style: TextStyle(
                           color: Color(0xff0D4715),
-                          fontFamily: "Roboto",
+                          fontFamily: "Poppins",
                           fontSize: 14.0,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
@@ -195,9 +192,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                         "100+ bought",
                         style: TextStyle(
                           color: Color(0xff0D4715),
-                          fontFamily: "Roboto",
+                          fontFamily: "Poppins",
                           fontSize: 14.0,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
@@ -210,9 +207,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                         "4.5",
                         style: TextStyle(
                           color: Color(0xff0D4715),
-                          fontFamily: "Roboto",
+                          fontFamily: "Poppins",
                           fontSize: 14.0,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
@@ -227,9 +224,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                 "Description",
                 style: TextStyle(
                   color: Color(0xff0D4715),
-                  fontFamily: "Roboto",
+                  fontFamily: "Poppins",
                   fontSize: 20.0,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -247,9 +244,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                       textAlign: TextAlign.start,
                       style: TextStyle(
                         color: Color(0xff6B8A88),
-                        fontFamily: "Roboto",
+                        fontFamily: "Poppins",
                         fontSize: 15.0,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),

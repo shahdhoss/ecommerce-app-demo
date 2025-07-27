@@ -37,6 +37,9 @@ dependencies:
   http: ^1.4.0
   mongo_dart: ^0.10.5
   font_awesome_flutter: ^10.8.0
+  flutter_chat_core: ^2.0.0
+  flutter_chat_ui: ^2.0.0
+  flutter_gemini: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -85,6 +88,13 @@ flutter:
       fonts: 
         - asset: fonts/Roboto-VariableFont_wdth,wght.ttf
         - asset: fonts/Roboto-Italic-VariableFont_wdth,wght.ttf
+    - family: Montserrat 
+      fonts: 
+        # - asset: fonts/Montserrat-Italic-VariableFont_wght.ttf
+        - asset: fonts/Montserrat-VariableFont_wght.ttf
+    - family: Poppins 
+      fonts: 
+        - asset: fonts/Poppins-SemiBold.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
