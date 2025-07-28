@@ -37,7 +37,7 @@ class _ProductDetailsState extends State<ProductDetails> {
     data = (ModalRoute.of(context)?.settings.arguments as Map?) ?? {};
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.fromLTRB(26, 30, 26, 20),
+        padding: EdgeInsets.fromLTRB(20, 30, 20, 20),
         child: Column(
           children: [
             Row(

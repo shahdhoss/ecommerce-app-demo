@@ -246,7 +246,7 @@ class _SignupState extends State<Signup> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
+              padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -285,34 +285,6 @@ class _SignupState extends State<Signup> {
                   ),
                 ],
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Already have an account? ",
-                  style: TextStyle(
-                    color: Color(0xff6B8A88),
-                    fontFamily: "Poppins",
-                    fontSize: 14,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                InkWell(
-                  child: Text(
-                    "Login",
-                    style: TextStyle(
-                      color: Color(0xff007AFF),
-                      fontFamily: "Poppins",
-                      fontSize: 14,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.pushNamed(context, "/login");
-                  },
-                ),
-              ],
             ),
           ],
         ),
