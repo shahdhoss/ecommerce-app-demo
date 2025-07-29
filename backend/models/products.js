@@ -1,38 +1,23 @@
-module.exports = (sequelize, DataTypes)=> {
-    const products = sequelize.define("products", {
-        id:{
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
-        },
-        title:{
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        price:{
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        picture:{
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        rating:{
-            type: DataTypes.STRING,
-            allowNull:false
-        },
-        num_ratings:{
-            type: DataTypes.INTEGER,
-            allowNull:false
-        },
-        sales_volume:{
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        unit_count:{
-            type: DataTypes.INTEGER,
-            allowNull: false
-        }
-    })
-    return products
-}
+const mongoose = require("mongoose")
+const Schema = mongoose.Schema
+const productSchema = new Schema({
+    title:{
+        type: String,
+        required: true
+    }, 
+    price:{
+        type: Number,
+        required: true
+    }, 
+    picture:{
+        type: String,
+        required: true
+    }, 
+    rating:{
+        type: String, 
+        required: true
+    },
+}, {timestamps: true})
+
+const Product = mongoose.model("Product", productSchema)
+module.exports = {Product}

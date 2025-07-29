@@ -1,8 +1,8 @@
 const fs = require("fs")
-const {Product} = require("../models/mongo_products")
+const {Product} = require("../models/products")
 const mongoose = require("mongoose")
 
-mongoose.connect("mongodb://localhost:27017/products", {
+mongoose.connect("mongodb://localhost:27017/foodapp", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })

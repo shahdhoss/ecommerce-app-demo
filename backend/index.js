@@ -1,16 +1,20 @@
 const express = require("express")
 const app = express()
-const db = require("./models")
+const {connectMongoDB} = require("./db-connection/mongoose")
+const {verifyToken} = require("./middleware/authMiddleware")
 require("dotenv").config()
 const userRouter = require("./routers/usersRouter")
+const favoriteRouter = require("./routers/favoritesRouter")
+const cartRouter = require("./routers/cartRouter")
 
 app.use(express.json())
 app.use("/", userRouter)
+app.use("/favorites", verifyToken ,favoriteRouter)
+app.use("/cart", verifyToken, cartRouter )
+connectMongoDB()
 
-db.sequelize.sync().then(()=>{
-    app.listen(process.env.port, () => {
+app.listen(process.env.port, () => {
     console.log(`Server listening on port ${process.env.port}`)
-    })
-}).catch((err)=>{
-    console.log(err, "Server is not connecting")
 })
+
+

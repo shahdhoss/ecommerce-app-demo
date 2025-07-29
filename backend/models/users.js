@@ -1,21 +1,19 @@
-module.exports = (sequelize, DataTypes)=>{
-    const users = sequelize.define("users", {
-        id:{
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true
-        },
-        name:{
-            type: DataTypes.STRING,
-            allowNull: false
-        }, 
-        email:{
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        refresh_token:{
-            type: DataTypes.STRING,
-        }
-    })
-    return users
-}
+const mongoose = require("mongoose")
+const Schema = mongoose.Schema
+const userSchema = new Schema({
+    name:{
+        type: String,
+        required: true,
+    }, 
+    email:{
+        type: String,
+        required: true
+    }, 
+    password:{
+        type: String,
+        required: true
+    },
+}, {timestamps: true})
+
+const User = mongoose.model("User", userSchema)
+module.exports ={User}
