@@ -9,7 +9,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  @override
+  final GlobalKey<FormState> formKey = GlobalKey();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   bool isPasswordVisible = true;
@@ -19,12 +19,13 @@ class _LoginState extends State<Login> {
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.fromLTRB(
           26,
-          MediaQuery.of(context).size.height * 0.1,
+          MediaQuery.of(context).size.height * 0.07,
           26,
           20,
         ),
@@ -44,98 +45,104 @@ class _LoginState extends State<Login> {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 20, 0, 8),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Email address",
-                  style: TextStyle(
-                    color: Color(0xff6B8A88),
-                    fontFamily: "Poppins",
-                    fontSize: 15,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-            ),
             Form(
+              key: formKey,
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Color(0xffF1F0E9),
-                ),
-                child: TextFormField(
-                  controller: email,
-                  style: TextStyle(
-                    color: Color(0xff0D4715),
-                    fontFamily: "Poppins",
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                  ),
-                  decoration: InputDecoration(
-                    isDense: true,
-                    prefixIcon: Icon(FontAwesomeIcons.envelope, size: 20),
-                    prefixIconColor: Color(0xff0D4715),
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.all(16),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 20, 0, 8),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Password",
-                  style: TextStyle(
-                    color: Color(0xff6B8A88),
-                    fontFamily: "Poppins",
-                    fontSize: 15,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-            ),
-            Form(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Color(0xffF1F0E9),
-                ),
-                child: TextFormField(
-                  obscureText: isPasswordVisible,
-                  controller: password,
-                  style: TextStyle(
-                    color: Color(0xff0D4715),
-                    fontFamily: "Poppins",
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                  ),
-                  decoration: InputDecoration(
-                    isDense: true,
-                    prefixIcon: Icon(FontAwesomeIcons.lock, size: 20),
-                    prefixIconColor: Color(0xff0D4715),
-                    suffixIcon: IconButton(
-                      onPressed: toggleVisibility,
-                      icon: Icon(
-                        isPasswordVisible
-                            ? FontAwesomeIcons.eye
-                            : FontAwesomeIcons.eyeSlash,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 18, 0, 8),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Email address",
+                        style: TextStyle(
+                          color: Color(0xff6B8A88),
+                          fontFamily: "Poppins",
+                          fontSize: 15,
+                          fontWeight: FontWeight.w900,
+                        ),
                       ),
                     ),
-                    suffixIconColor: Colors.lightGreen,
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.all(16),
                   ),
-                ),
+                  TextFormField(
+                    controller: email,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "Enter an email";
+                      }
+                    },
+                    style: TextStyle(
+                      color: Color(0xff0D4715),
+                      fontFamily: "Poppins",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Color(0xffF1F0E9),
+                      isDense: true,
+                      prefixIcon: Icon(FontAwesomeIcons.envelope, size: 20),
+                      prefixIconColor: Color(0xff0D4715),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0, 8, 0, 0),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 18, 0, 8),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Password",
+                        style: TextStyle(
+                          color: Color(0xff6B8A88),
+                          fontFamily: "Poppins",
+                          fontSize: 15,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ),
+                  TextFormField(
+                    obscureText: isPasswordVisible,
+                    controller: password,
+                    validator: (value) {
+                      if (value!.length < 6) {
+                        return "Password length must be at least 6 characters";
+                      }
+                    },
+                    style: TextStyle(
+                      color: Color(0xff0D4715),
+                      fontFamily: "Poppins",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
+                    decoration: InputDecoration(
+                      isDense: true,
+                      filled: true,
+                      fillColor: Color(0xffF1F0E9),
+                      prefixIcon: Icon(FontAwesomeIcons.lock, size: 20),
+                      prefixIconColor: Color(0xff0D4715),
+                      suffixIcon: IconButton(
+                        onPressed: toggleVisibility,
+                        icon: Icon(
+                          isPasswordVisible
+                              ? FontAwesomeIcons.eye
+                              : FontAwesomeIcons.eyeSlash,
+                        ),
+                      ),
+                      suffixIconColor: Colors.lightGreen,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0, 8, 0, 0),
+                    ),
+                  ),
+                ],
               ),
             ),
             Padding(
@@ -145,7 +152,7 @@ class _LoginState extends State<Login> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Color.fromARGB(255, 30, 169, 88),
+                      Color.fromARGB(255, 33, 185, 96),
                       Color.fromARGB(255, 0, 255, 132),
                     ],
                     begin: Alignment.topLeft,
@@ -154,13 +161,15 @@ class _LoginState extends State<Login> {
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    if (formKey.currentState!.validate()) {}
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
                   ),
                   child: Text(
-                    "Login",
+                    "Sign up",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 15,
@@ -184,12 +193,12 @@ class _LoginState extends State<Login> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                     child: Text(
-                      "or continue with",
+                      "or with",
                       style: TextStyle(
                         color: Color(0xff6B8A88),
                         fontFamily: "Poppins",
                         fontSize: 14,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -203,7 +212,7 @@ class _LoginState extends State<Login> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+              padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

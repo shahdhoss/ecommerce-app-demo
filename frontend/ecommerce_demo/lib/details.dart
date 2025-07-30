@@ -49,7 +49,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                     color: Color(0xff0D4715),
                     icon: Icon(Icons.arrow_back),
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, "/");
+                      Navigator.pop(context);
                     },
                   ),
                 ),
@@ -230,23 +230,26 @@ class _ProductDetailsState extends State<ProductDetails> {
                 ),
               ),
             ),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 10),
-                child: Container(
-                  padding: EdgeInsets.all(8),
-                  color: Color(0xffF5F9F8),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      "100% satisfaction guaranteed. Missing, poor items, poor quality or delivery issues? We'll resolve everything quickly, with care and professionalism.",
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        color: Color(0xff6B8A88),
-                        fontFamily: "Poppins",
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.bold,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 20, sigmaY: 10),
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    color: Color(0xffF5F9F8),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        "100% satisfaction guaranteed. Missing, poor items, poor quality or delivery issues? We'll resolve everything quickly, with care and professionalism.",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          color: Color(0xff6B8A88),
+                          fontFamily: "Poppins",
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

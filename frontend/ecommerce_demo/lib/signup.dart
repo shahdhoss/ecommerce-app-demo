@@ -9,17 +9,19 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-  @override
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   TextEditingController name = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   bool isPasswordVisible = true;
+
   void toggleVisibility() {
     setState(() {
       isPasswordVisible = !isPasswordVisible;
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
@@ -45,140 +47,145 @@ class _SignupState extends State<Signup> {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 20, 0, 8),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Full Name",
-                  style: TextStyle(
-                    color: Color(0xff6B8A88),
-                    fontFamily: "Poppins",
-                    fontSize: 15,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-            ),
             Form(
+              key: formKey,
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Color(0xffF1F0E9),
-                ),
-                child: TextFormField(
-                  controller: name,
-                  style: TextStyle(
-                    color: Color(0xff0D4715),
-                    fontFamily: "Poppins",
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                  ),
-                  decoration: InputDecoration(
-                    isDense: true,
-                    prefixIcon: Icon(Icons.person_2_rounded, size: 20),
-                    prefixIconColor: Color(0xff0D4715),
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.all(16),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 20, 0, 8),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Email address",
-                  style: TextStyle(
-                    color: Color(0xff6B8A88),
-                    fontFamily: "Poppins",
-                    fontSize: 15,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-            ),
-            Form(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Color(0xffF1F0E9),
-                ),
-                child: TextFormField(
-                  controller: email,
-                  style: TextStyle(
-                    color: Color(0xff0D4715),
-                    fontFamily: "Poppins",
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                  ),
-                  decoration: InputDecoration(
-                    isDense: true,
-                    prefixIcon: Icon(FontAwesomeIcons.envelope, size: 20),
-                    prefixIconColor: Color(0xff0D4715),
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.all(16),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 20, 0, 8),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Password",
-                  style: TextStyle(
-                    color: Color(0xff6B8A88),
-                    fontFamily: "Poppins",
-                    fontSize: 15,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-            ),
-            Form(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Color(0xffF1F0E9),
-                ),
-                child: TextFormField(
-                  obscureText: isPasswordVisible,
-                  controller: password,
-                  style: TextStyle(
-                    color: Color(0xff0D4715),
-                    fontFamily: "Poppins",
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                  ),
-                  decoration: InputDecoration(
-                    isDense: true,
-                    prefixIcon: Icon(FontAwesomeIcons.lock, size: 20),
-                    prefixIconColor: Color(0xff0D4715),
-                    suffixIcon: IconButton(
-                      onPressed: toggleVisibility,
-                      icon: Icon(
-                        isPasswordVisible
-                            ? FontAwesomeIcons.eye
-                            : FontAwesomeIcons.eyeSlash,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 18, 0, 8),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Full Name",
+                        style: TextStyle(
+                          color: Color(0xff6B8A88),
+                          fontFamily: "Poppins",
+                          fontSize: 15,
+                          fontWeight: FontWeight.w900,
+                        ),
                       ),
                     ),
-                    suffixIconColor: Colors.lightGreen,
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.all(16),
                   ),
-                ),
+                  TextFormField(
+                    controller: name,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "Enter a name";
+                      }
+                    },
+                    style: TextStyle(
+                      color: Color(0xff0D4715),
+                      fontFamily: "Poppins",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
+                    decoration: InputDecoration(
+                      fillColor: Color(0xffF1F0E9),
+                      filled: true,
+                      isDense: true,
+                      prefixIcon: Icon(Icons.person_2_rounded, size: 20),
+                      prefixIconColor: Color(0xff0D4715),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0, 8, 0, 0),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 18, 0, 8),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Email address",
+                        style: TextStyle(
+                          color: Color(0xff6B8A88),
+                          fontFamily: "Poppins",
+                          fontSize: 15,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ),
+                  TextFormField(
+                    controller: email,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "Enter an email";
+                      }
+                    },
+                    style: TextStyle(
+                      color: Color(0xff0D4715),
+                      fontFamily: "Poppins",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Color(0xffF1F0E9),
+                      isDense: true,
+                      prefixIcon: Icon(FontAwesomeIcons.envelope, size: 20),
+                      prefixIconColor: Color(0xff0D4715),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0, 8, 0, 0),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 18, 0, 8),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Password",
+                        style: TextStyle(
+                          color: Color(0xff6B8A88),
+                          fontFamily: "Poppins",
+                          fontSize: 15,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ),
+                  TextFormField(
+                    obscureText: isPasswordVisible,
+                    controller: password,
+                    validator: (value) {
+                      if (value!.length < 6) {
+                        return "Password length must be at least 6 characters";
+                      }
+                    },
+                    style: TextStyle(
+                      color: Color(0xff0D4715),
+                      fontFamily: "Poppins",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
+                    decoration: InputDecoration(
+                      isDense: true,
+                      filled: true,
+                      fillColor: Color(0xffF1F0E9),
+                      prefixIcon: Icon(FontAwesomeIcons.lock, size: 20),
+                      prefixIconColor: Color(0xff0D4715),
+                      suffixIcon: IconButton(
+                        onPressed: toggleVisibility,
+                        icon: Icon(
+                          isPasswordVisible
+                              ? FontAwesomeIcons.eye
+                              : FontAwesomeIcons.eyeSlash,
+                        ),
+                      ),
+                      suffixIconColor: Colors.lightGreen,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0, 8, 0, 0),
+                    ),
+                  ),
+                ],
               ),
             ),
             Padding(
@@ -197,7 +204,9 @@ class _SignupState extends State<Signup> {
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    if (formKey.currentState!.validate()) {}
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
