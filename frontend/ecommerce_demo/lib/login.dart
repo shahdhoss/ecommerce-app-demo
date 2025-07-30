@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart' as http;
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -12,11 +16,28 @@ class _LoginState extends State<Login> {
   final GlobalKey<FormState> formKey = GlobalKey();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  final storage = FlutterSecureStorage();
   bool isPasswordVisible = true;
   void toggleVisibility() {
     setState(() {
       isPasswordVisible = !isPasswordVisible;
     });
+  }
+
+  Future loginUser(Map userData) async {
+    final response = await http.post(
+      Uri.parse("http://10.0.2.2:8000/login"),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(userData),
+    );
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      await storage.write(key: 'token', value: responseBody["token"]);
+      print("user logged in successfully");
+      Navigator.pushNamed(context, "/");
+    } else {
+      print("failed to log user in ${response.statusCode}");
+    }
   }
 
   @override
@@ -162,7 +183,13 @@ class _LoginState extends State<Login> {
                 ),
                 child: ElevatedButton(
                   onPressed: () {
-                    if (formKey.currentState!.validate()) {}
+                    if (formKey.currentState!.validate()) {
+                      Map userData = {
+                        "email": email.text,
+                        "password": password.text,
+                      };
+                      loginUser(userData);
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,

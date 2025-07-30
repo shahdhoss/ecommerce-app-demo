@@ -1,5 +1,9 @@
+import "dart:convert";
+
 import 'package:flutter/material.dart';
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
+import "package:http/http.dart" as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -13,12 +17,29 @@ class _SignupState extends State<Signup> {
   TextEditingController name = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  final storage = FlutterSecureStorage();
   bool isPasswordVisible = true;
 
   void toggleVisibility() {
     setState(() {
       isPasswordVisible = !isPasswordVisible;
     });
+  }
+
+  Future registerUser(Map userData) async {
+    final response = await http.post(
+      Uri.parse("http://10.0.2.2:8000/register"),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(userData),
+    );
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      await storage.write(key: 'token', value: responseBody["token"]);
+      print("signed in successfully");
+      Navigator.pushNamed(context, "/");
+    } else {
+      print("failed to register user : ${response.statusCode}");
+    }
   }
 
   @override
@@ -205,7 +226,14 @@ class _SignupState extends State<Signup> {
                 ),
                 child: ElevatedButton(
                   onPressed: () {
-                    if (formKey.currentState!.validate()) {}
+                    if (formKey.currentState!.validate()) {
+                      Map userData = {
+                        "name": name.text,
+                        "email": email.text,
+                        "password": password.text,
+                      };
+                      registerUser(userData);
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
