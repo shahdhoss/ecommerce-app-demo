@@ -46,7 +46,7 @@ class _MainScaffoldState extends State<MainScaffold> {
   void checkTokenExpiry() async {
     tokenExpiryState = await isTokenExpired();
     setState(() {
-      pages = [Home(), Products(), tokenExpiryState ? Login() : Login()];
+      pages = [Home(), Products(), tokenExpiryState ? Login() : Wishlist()];
     });
   }
 

@@ -3,6 +3,10 @@ const {Favorites} = require("../models/favorites")
 exports.addtoFavorites = async (req,res) => {
     try{
         const {userId, productId} = req.body
+        const existingFavorite = await Favorites.findOne({ userId, productId });
+        if (existingFavorite) {
+            return res.status(400).json({ message: "Product already in favorites" });
+        }
         const favorite = new Favorites({userId, productId})
         await favorite.save()
         res.status(200).json({message: "Product added to favorites"})
@@ -16,6 +20,7 @@ exports.addtoFavorites = async (req,res) => {
 exports.removefromFavorites = async(req,res)=>{
     try{
         const {userId, productId} = req.body
+        
         const deletedProduct = await Favorites.findOneAndDelete({userId, productId})
         if (deletedProduct) {
             res.status(200).json({ message: "Favorite removed", data: deletedProduct })
@@ -24,5 +29,17 @@ exports.removefromFavorites = async(req,res)=>{
     }catch(err){
         console.log(err)
         res.status(500).json({error:"Couldn't remove product"})
+    }
+}
+
+exports.getAllFavoritesOfUser = async(req,res)=>{
+    try{
+        const  {userId} = req.params
+        const products = await Favorites.find({userId:userId})
+        res.status(200).json({ products })
+
+    }catch(err){
+        console.log("an error happened: ", err)
+        res.status(500).json({error: "Couldn't get favorites"})
     }
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import "package:http/http.dart" as http;
 import 'dart:convert';
 import "package:flutter/cupertino.dart";
-import 'mongodb.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import "package:http/http.dart" as http;
 
 class Products extends StatefulWidget {
   const Products({super.key});
@@ -12,31 +14,128 @@ class Products extends StatefulWidget {
 }
 
 class _ProductsState extends State<Products> {
-  List pictures = [];
-  List titles = [];
-  List prices = [];
-  List favorites = [];
+  List products = [];
+  List userFavorites = [];
+  String userId = '';
+  final storage = FlutterSecureStorage();
   TextEditingController textEditingController = TextEditingController();
 
   void fetchProducts() async {
-    var products = await databaseConnection.getData();
-    for (int i = 0; i < products.length; i++) {
+    final response = await http.get(
+      Uri.parse("http://10.0.2.2:8000/products/get"),
+      headers: {'Content-Type': 'application/json'},
+    );
+    if (response.statusCode == 200) {
+      final Map reponseProducts = jsonDecode(response.body);
       setState(() {
-        titles.insert(i, products[i]["title"]);
-        prices.insert(i, products[i]["price"]);
-        pictures.insert(i, products[i]["picture"]);
-        favorites.insert(i, false);
+        products = reponseProducts["products"];
       });
+      for (var i = 0; i < products.length; i++) {
+        products[i]["isFavorite"] = false;
+      }
     }
-    print(prices);
-    print(titles);
-    print(pictures);
+  }
+
+  void addToFavorites(Map data) async {
+    String? token = await storage.read(key: 'token');
+    final response = await http.post(
+      Uri.parse("http://10.0.2.2:8000/favorites/add"),
+      headers: {"Content-Type": "application/json", "Authorization": "$token"},
+      body: jsonEncode(data),
+    );
+    try {
+      if (response.statusCode == 200) {
+        print("product liked");
+      } else {
+        print(response.statusCode);
+      }
+    } catch (err) {
+      print("product failed to be put into wishlist ${err}");
+    }
+  }
+
+  void removeFromFavorites(Map data) async {
+    String? token = await storage.read(key: 'token');
+    final response = await http.delete(
+      Uri.parse("http://10.0.2.2:8000/favorites/remove"),
+      headers: {"Content-Type": "application/json", "Authorization": "$token"},
+      body: jsonEncode(data),
+    );
+    try {
+      if (response.statusCode == 200) {
+        print("product removed");
+      } else {
+        print(response.statusCode);
+      }
+    } catch (err) {
+      print("product failed to be removed from wishlist ${err}");
+    }
+  }
+
+  Future getUserFavorites(String userId) async {
+    String? token = await storage.read(key: 'token');
+    final reponse = await http.get(
+      Uri.parse("http://10.0.2.2:8000/favorites/get/${userId}"),
+      headers: {"Content-Type": "application/json", "Authorization": "$token"},
+    );
+    if (reponse.statusCode == 200) {
+      final decoded = jsonDecode(reponse.body);
+      userFavorites = decoded["products"];
+      print("User favorites set successfully");
+    } else {
+      print("Issues with setting the user favorites");
+    }
+  }
+
+  Future setUserFavorites() async {
+    await getUserFavorites(userId);
+    for (int i = 0; i < userFavorites.length; i++) {
+      for (int j = 0; j < products.length; j++) {
+        if (products[j]["_id"] == userFavorites[i]["productId"]) {
+          products[j]["isFavorite"] = true;
+        }
+      }
+    }
+    setState(() {});
+  }
+
+  void updateUserFavorites() async {
+    await getUserFavorites(userId);
+    await setUserFavorites();
+  }
+
+  bool isProductInFavorites(String productId) {
+    for (var i = 0; i < userFavorites.length; i++) {
+      if (productId == userFavorites[i]["productId"]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Future setUserId() async {
+    String? token = await storage.read(key: "token");
+    if (token == null || token.isEmpty) {
+      return;
+    }
+    try {
+      Map decodedToken = JwtDecoder.decode(token);
+      userId = decodedToken["userId"];
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  void initialize() async {
+    await setUserId();
+    await setUserFavorites();
   }
 
   @override
   void initState() {
     super.initState();
     fetchProducts();
+    initialize();
   }
 
   Widget build(BuildContext context) {
@@ -67,7 +166,7 @@ class _ProductsState extends State<Products> {
               ),
             ),
             Expanded(
-              child: titles.isEmpty
+              child: products.isEmpty
                   ? Center(child: CupertinoActivityIndicator())
                   : GridView.builder(
                       gridDelegate:
@@ -75,7 +174,7 @@ class _ProductsState extends State<Products> {
                             crossAxisCount: 2,
                             childAspectRatio: 0.75,
                           ),
-                      itemCount: titles.length,
+                      itemCount: products.length,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.all(16.0),
@@ -95,14 +194,15 @@ class _ProductsState extends State<Products> {
                                             context,
                                             '/details',
                                             arguments: {
-                                              "title": titles[index],
-                                              "picture": pictures[index],
-                                              "price": prices[index],
+                                              "title": products[index]["title"],
+                                              "picture":
+                                                  products[index]["picture"],
+                                              "price": products[index]["price"],
                                             },
                                           );
                                         },
                                         child: Image.network(
-                                          pictures[index],
+                                          products[index]["picture"],
                                           fit: BoxFit.cover,
                                           loadingBuilder: (context, child, loadingProgress) {
                                             if (loadingProgress == null)
@@ -131,13 +231,26 @@ class _ProductsState extends State<Products> {
                                     child: IconButton(
                                       onPressed: () {
                                         setState(() {
-                                          favorites[index] = !favorites[index];
+                                          products[index]["isFavorite"] =
+                                              !products[index]["isFavorite"];
                                         });
+                                        Map data = {
+                                          "userId": userId,
+                                          "productId": products[index]["_id"],
+                                        };
+                                        if (isProductInFavorites(
+                                          products[index]["_id"],
+                                        )) {
+                                          removeFromFavorites(data);
+                                        } else {
+                                          addToFavorites(data);
+                                        }
+                                        updateUserFavorites();
                                       },
                                       icon: Icon(
-                                        !favorites[index]
-                                            ? Icons.favorite_border
-                                            : Icons.favorite,
+                                        products[index]["isFavorite"]
+                                            ? Icons.favorite
+                                            : Icons.favorite_border_outlined,
                                         color: Color(0xff0D4715),
                                       ),
                                     ),
@@ -156,10 +269,13 @@ class _ProductsState extends State<Products> {
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      titles[index].length > 15
-                                          ? titles[index].substring(0, 15) +
+                                      products[index]["title"].length > 15
+                                          ? products[index]["title"].substring(
+                                                  0,
+                                                  15,
+                                                ) +
                                                 "..."
-                                          : titles[index],
+                                          : products[index]["title"],
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
                                         fontFamily: "Poppins",
@@ -181,7 +297,7 @@ class _ProductsState extends State<Products> {
                                 child: Align(
                                   alignment: Alignment.topLeft,
                                   child: Text(
-                                    "\$${prices[index].toString()}",
+                                    "\$${products[index]["price"].toString()}",
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
                                       fontFamily: "Poppins",
