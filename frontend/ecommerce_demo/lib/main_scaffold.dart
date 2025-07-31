@@ -79,7 +79,7 @@ class _MainScaffoldState extends State<MainScaffold> {
           },
           tabs: [
             GButton(icon: Icons.home, text: "Home"),
-            GButton(icon: Icons.search, text: "Search"),
+            GButton(icon: Icons.search, text: "Browse"),
             tokenExpiryState
                 ? GButton(icon: Icons.person_2_rounded, text: "Login")
                 : GButton(

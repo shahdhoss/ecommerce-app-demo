@@ -1,8 +1,9 @@
-import 'package:ecommerce_demo/mongodb.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import "package:http/http.dart" as http;
+import 'dart:convert';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -12,26 +13,21 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List titles = [];
-  List prices = [];
-  List pictures = [];
-  List favorites = [];
+  List products = [];
   TextEditingController search = TextEditingController();
   final pageController = PageController();
 
   void fetchProducts() async {
-    var products = await databaseConnection.getData();
-    for (int i = 0; i < products.length; i++) {
+    final response = await http.get(
+      Uri.parse("http://10.0.2.2:8000/products/get"),
+      headers: {'Content-Type': 'application/json'},
+    );
+    if (response.statusCode == 200) {
+      final Map reponseProducts = jsonDecode(response.body);
       setState(() {
-        titles.insert(i, products[i]["title"]);
-        prices.insert(i, products[i]["price"]);
-        pictures.insert(i, products[i]["picture"]);
-        favorites.insert(i, false);
+        products = reponseProducts["products"];
       });
     }
-    print(prices);
-    print(titles);
-    print(pictures);
   }
 
   @override
@@ -325,7 +321,7 @@ class _HomeState extends State<Home> {
               ],
             ),
             Expanded(
-              child: titles.isEmpty
+              child: products.isEmpty
                   ? Center(child: CupertinoActivityIndicator())
                   : ListView.builder(
                       scrollDirection: Axis.horizontal,
@@ -338,69 +334,48 @@ class _HomeState extends State<Home> {
                             height: 60,
                             child: Column(
                               children: [
-                                Stack(
-                                  children: [
-                                    AspectRatio(
-                                      aspectRatio: 1.47,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(15),
-                                        ),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            Navigator.pushNamed(
-                                              context,
-                                              '/details',
-                                              arguments: {
-                                                "title": titles[index],
-                                                "picture": pictures[index],
-                                                "price": prices[index],
-                                              },
-                                            );
+                                AspectRatio(
+                                  aspectRatio: 1.47,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(15),
+                                    ),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          '/details',
+                                          arguments: {
+                                            "title": products[index]["title"],
+                                            "picture":
+                                                products[index]["picture"],
+                                            "price": products[index]["price"],
                                           },
-                                          child: Image.network(
-                                            pictures[index],
-                                            fit: BoxFit.cover,
-                                            loadingBuilder: (context, child, loadingProgress) {
-                                              if (loadingProgress == null)
-                                                return child;
-                                              return Center(
-                                                child: CircularProgressIndicator(
-                                                  value:
-                                                      loadingProgress
-                                                              .expectedTotalBytes !=
-                                                          null
-                                                      ? loadingProgress
-                                                                .cumulativeBytesLoaded /
-                                                            loadingProgress
-                                                                .expectedTotalBytes!
-                                                      : null,
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: 8,
-                                      right: 5,
-                                      child: IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            favorites[index] =
-                                                !favorites[index];
-                                          });
+                                        );
+                                      },
+                                      child: Image.network(
+                                        products[index]["picture"],
+                                        fit: BoxFit.cover,
+                                        loadingBuilder: (context, child, loadingProgress) {
+                                          if (loadingProgress == null)
+                                            return child;
+                                          return Center(
+                                            child: CircularProgressIndicator(
+                                              value:
+                                                  loadingProgress
+                                                          .expectedTotalBytes !=
+                                                      null
+                                                  ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes!
+                                                  : null,
+                                            ),
+                                          );
                                         },
-                                        icon: Icon(
-                                          !favorites[index]
-                                              ? Icons.favorite_border
-                                              : Icons.favorite,
-                                          color: Color(0xff0D4715),
-                                        ),
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
                                 Align(
                                   alignment: Alignment.centerRight,
@@ -414,10 +389,11 @@ class _HomeState extends State<Home> {
                                     child: Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                        titles[index].length > 15
-                                            ? titles[index].substring(0, 15) +
+                                        products[index]["title"].length > 15
+                                            ? products[index]["title"]
+                                                      .substring(0, 15) +
                                                   "..."
-                                            : titles[index],
+                                            : products[index]["title"],
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
                                           fontFamily: "Poppins",

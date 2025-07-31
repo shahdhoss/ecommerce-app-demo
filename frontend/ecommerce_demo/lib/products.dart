@@ -96,7 +96,9 @@ class _ProductsState extends State<Products> {
         }
       }
     }
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void updateUserFavorites() async {
