@@ -1,3 +1,4 @@
+import 'package:ecommerce_demo/cart.dart';
 import 'package:ecommerce_demo/details.dart';
 import 'package:ecommerce_demo/home.dart';
 import 'package:ecommerce_demo/login.dart';
@@ -46,14 +47,14 @@ class _MainScaffoldState extends State<MainScaffold> {
   void checkTokenExpiry() async {
     tokenExpiryState = await isTokenExpired();
     setState(() {
-      pages = [Home(), Products(), tokenExpiryState ? Login() : Wishlist()];
+      pages = [Home(), Products(), tokenExpiryState ? Login() : Wishlist(), CartWidget()];
     });
   }
 
   @override
   void initState() {
     super.initState();
-    pages = [Home(), Products(), tokenExpiryState ? Login() : Wishlist()];
+    pages = [Home(), Products(), tokenExpiryState ? Login() : Wishlist(), CartWidget()];
     checkTokenExpiry();
   }
 
@@ -86,6 +87,7 @@ class _MainScaffoldState extends State<MainScaffold> {
                     icon: Icons.favorite_border_rounded,
                     text: "Wishlist",
                   ),
+            GButton(icon: Icons.shopping_cart, text: "Cart"),
           ],
         ),
       ),

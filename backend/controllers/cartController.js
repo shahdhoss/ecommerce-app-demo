@@ -49,3 +49,21 @@ exports.removefromCart = async (req,res) => {
         return res.status(500).json({error:"Couldn't delete product"})
     }
 }
+
+exports.getUserCart= async(req,res)=>{
+    try{
+        const  {userId} = req.params
+        const cart = await Cart.find({userId:userId})
+         const productDetails = await Promise.all(
+            cart.map(item => Product.findOne({ _id: item.productId }))
+            );
+        const cartWithDetails = productDetails.map((product, index) => ({
+        ...product.toObject(),            
+        quantity: cart[index].quantity,   
+        }));
+        return res.status(200).json({cart:cartWithDetails})
+    }catch(err){
+        console.log(err)
+        return res.status(500).json({error: "Couldn't get favorites"})
+    }
+}
