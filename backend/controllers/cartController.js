@@ -3,10 +3,24 @@ const {Product} = require("../models/products")
 
 exports.addtoCart = async (req,res) => {
     try{
-        const {userId, productId, quantity} = req.body
-        const cartItem = new Cart({userId, productId, quantity})
-        await cartItem.save()
-        return res.status(200).json({message: "Product added to cart"})
+        const {userId, productId } = req.body
+        const cartItem = await Cart.findOne({userId: userId, productId: productId})
+        if (cartItem){
+            const updatedCartItem = await Cart.findOneAndUpdate({ userId: userId, productId: productId },{ $inc: { quantity: + 1 } }, {new:true})
+            const updatedProductStock = await Product.findOneAndUpdate({ _id: productId, stock: { $gt: 0 } },{ $inc: { stock: -1 } }, { new: true })
+            if (!updatedProductStock) {
+                return res.status(400).json({ message: "Product out of stock" });
+            }
+            return res.status(200).json({item: updatedCartItem, productStock: updatedProductStock})
+        }
+        else{
+            const newCartItem = await Cart.create({userId: userId, productId: productId})
+            const updatedProductStock = await Product.findOneAndUpdate({ _id: productId, stock: { $gt: 0 } },{ $inc: { stock: -1 } }, { new: true })
+            if (!updatedProductStock) {
+                return res.status(400).json({ message: "Product out of stock" });
+            }
+            return res.status(200).json({item: newCartItem, productStock: updatedProductStock})
+        }
     }
     catch(err){
         console.log(err)
@@ -14,34 +28,24 @@ exports.addtoCart = async (req,res) => {
     }
 }
 
-exports.removefromCart = async(req,res)=>{
+exports.removefromCart = async (req,res) => {
     try{
-        const {userId, productId} = req.body
-        const deletedProduct = await Cart.findOneAndDelete({userId, productId})
-        if (deletedProduct) {
-            return res.status(200).json({ message: "Cart item removed", data: deletedProduct })
-             
+        const {userId, productId } = req.body
+        const cartItem = await Cart.findOne({userId: userId, productId: productId})
+        if (cartItem){
+                const updatedCartItem = await Cart.findOneAndUpdate({ userId: userId, productId: productId , quantity: { $gt: 0 } } ,{ $inc: { quantity: - 1 } }, {new:true})
+                if (!updatedCartItem) {
+                    return res.status(400).json({ message: "Product removed from cart" });
+                }
+                const updatedProductStock = await Product.findOneAndUpdate({ _id: productId} ,{ $inc: { stock: + 1 } }, { new: true })
+                return res.status(200).json({item: updatedCartItem, productStock: updatedProductStock})
         }
-        return res.status(404).json({ error: "Item not found" })
-    }catch(err){
-        console.log(err)
-        return res.status(500).json({error:"Couldn't remove product"})
+        else{
+            return res.status(400).json({ message: "Product not in cart" });
+        }
     }
-}
-
-exports.incrementItem = async (req,res) =>{
-    try{
-        const {userId, productId} = req.body
-        const product = Product.find({_id: productId})
-        const cartItem = Cart.find({userId, productId})
-        if(product["stock"]>0){
-            cartItem["quantity"]++
-            return res.status(200).json({cartItem: cartItem })
-             
-        } 
-        return res.status(500).json({error: "Item not in stock"})
-    }catch(err){
-        console.log("An error happened: ", err)
-        return res.status(500).json({error: "Something went wrong"})
+    catch(err){
+        console.log(err)
+        return res.status(500).json({error:"Couldn't delete product"})
     }
 }
