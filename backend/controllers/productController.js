@@ -12,3 +12,17 @@ exports.getAllProducts = async(req,res)=>{
         res.status(500).json({error:"Failed to get products "})
     }
 }
+
+exports.editProductStock = async(req,res)=>{
+    try{
+        const {productId, stock} = req.body
+        const product = await Product.findByIdAndUpdate(productId,{ $set: { stock: stock } },{ new: true })
+        if(product){
+            res.status(200).json({product})
+        }
+        res.status(500).json({message: "Product not found"})
+    }catch(err){
+        console.log(err)
+        res.status(500).json({error: "Failed to edit product"})
+    }
+}

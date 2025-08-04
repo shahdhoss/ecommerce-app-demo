@@ -1,4 +1,5 @@
 const {Favorites} = require("../models/favorites")
+const {Product}= require("../models/products")
 
 exports.addtoFavorites = async (req,res) => {
     try{
@@ -40,6 +41,20 @@ exports.getAllFavoritesOfUser = async(req,res)=>{
 
     }catch(err){
         console.log("an error happened: ", err)
+        res.status(500).json({error: "Couldn't get favorites"})
+    }
+}
+
+exports.getFavoritesDetails= async(req,res)=>{
+    try{
+        const  {userId} = req.params
+        const favorites = await Favorites.find({userId:userId})
+         const productDetails = await Promise.all(
+            favorites.map(fav => Product.findOne({ _id: fav.productId }))
+            );
+        res.status(200).json({productDetails})
+    }catch(err){
+        console.log(err)
         res.status(500).json({error: "Couldn't get favorites"})
     }
 }

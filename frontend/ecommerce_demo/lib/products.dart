@@ -5,6 +5,7 @@ import 'dart:convert';
 import "package:flutter/cupertino.dart";
 import 'package:jwt_decoder/jwt_decoder.dart';
 import "package:http/http.dart" as http;
+import 'wishlist_functions.dart';
 
 class Products extends StatefulWidget {
   const Products({super.key});
@@ -33,42 +34,6 @@ class _ProductsState extends State<Products> {
       for (var i = 0; i < products.length; i++) {
         products[i]["isFavorite"] = false;
       }
-    }
-  }
-
-  void addToFavorites(Map data) async {
-    String? token = await storage.read(key: 'token');
-    final response = await http.post(
-      Uri.parse("http://10.0.2.2:8000/favorites/add"),
-      headers: {"Content-Type": "application/json", "Authorization": "$token"},
-      body: jsonEncode(data),
-    );
-    try {
-      if (response.statusCode == 200) {
-        print("product liked");
-      } else {
-        print(response.statusCode);
-      }
-    } catch (err) {
-      print("product failed to be put into wishlist ${err}");
-    }
-  }
-
-  void removeFromFavorites(Map data) async {
-    String? token = await storage.read(key: 'token');
-    final response = await http.delete(
-      Uri.parse("http://10.0.2.2:8000/favorites/remove"),
-      headers: {"Content-Type": "application/json", "Authorization": "$token"},
-      body: jsonEncode(data),
-    );
-    try {
-      if (response.statusCode == 200) {
-        print("product removed");
-      } else {
-        print(response.statusCode);
-      }
-    } catch (err) {
-      print("product failed to be removed from wishlist ${err}");
     }
   }
 
@@ -230,30 +195,40 @@ class _ProductsState extends State<Products> {
                                   Positioned(
                                     top: 8,
                                     right: 5,
-                                    child: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          products[index]["isFavorite"] =
-                                              !products[index]["isFavorite"];
-                                        });
-                                        Map data = {
-                                          "userId": userId,
-                                          "productId": products[index]["_id"],
-                                        };
-                                        if (isProductInFavorites(
-                                          products[index]["_id"],
-                                        )) {
-                                          removeFromFavorites(data);
-                                        } else {
-                                          addToFavorites(data);
-                                        }
-                                        updateUserFavorites();
-                                      },
-                                      icon: Icon(
-                                        products[index]["isFavorite"]
-                                            ? Icons.favorite
-                                            : Icons.favorite_border_outlined,
-                                        color: Color(0xff0D4715),
+                                    child: CircleAvatar(
+                                      radius: 15,
+                                      backgroundColor: Color.fromARGB(
+                                        255,
+                                        215,
+                                        215,
+                                        215,
+                                      ),
+                                      child: IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            products[index]["isFavorite"] =
+                                                !products[index]["isFavorite"];
+                                          });
+                                          Map data = {
+                                            "userId": userId,
+                                            "productId": products[index]["_id"],
+                                          };
+                                          if (isProductInFavorites(
+                                            products[index]["_id"],
+                                          )) {
+                                            removeFromFavorites(data, storage);
+                                          } else {
+                                            addToFavorites(data, storage);
+                                          }
+                                          updateUserFavorites();
+                                        },
+                                        icon: Icon(
+                                          products[index]["isFavorite"]
+                                              ? Icons.favorite
+                                              : Icons.favorite_border_outlined,
+                                          color: Color(0xff0D4715),
+                                          size: 15,
+                                        ),
                                       ),
                                     ),
                                   ),
