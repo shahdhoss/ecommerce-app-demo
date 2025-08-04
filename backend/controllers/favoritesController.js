@@ -10,11 +10,11 @@ exports.addtoFavorites = async (req,res) => {
         }
         const favorite = new Favorites({userId, productId})
         await favorite.save()
-        res.status(200).json({message: "Product added to favorites"})
+        return res.status(200).json({message: "Product added to favorites"})
     }
     catch(err){
         console.log(err)
-        res.status(500).json({error:"Couldn't add product"})
+        return res.status(500).json({error:"Couldn't add product"})
     }
 }
 
@@ -24,12 +24,12 @@ exports.removefromFavorites = async(req,res)=>{
         
         const deletedProduct = await Favorites.findOneAndDelete({userId, productId})
         if (deletedProduct) {
-            res.status(200).json({ message: "Favorite removed", data: deletedProduct })
+           return res.status(200).json({ message: "Favorite removed", data: deletedProduct })
         }
-        res.status(404).json({ error: "Favorite not found" })
+        return res.status(404).json({ error: "Favorite not found" })
     }catch(err){
         console.log(err)
-        res.status(500).json({error:"Couldn't remove product"})
+        return res.status(500).json({error:"Couldn't remove product"})
     }
 }
 
@@ -37,11 +37,11 @@ exports.getAllFavoritesOfUser = async(req,res)=>{
     try{
         const  {userId} = req.params
         const products = await Favorites.find({userId:userId})
-        res.status(200).json({ products })
+        return res.status(200).json({ products })
 
     }catch(err){
         console.log("an error happened: ", err)
-        res.status(500).json({error: "Couldn't get favorites"})
+        return res.status(500).json({error: "Couldn't get favorites"})
     }
 }
 
@@ -52,9 +52,9 @@ exports.getFavoritesDetails= async(req,res)=>{
          const productDetails = await Promise.all(
             favorites.map(fav => Product.findOne({ _id: fav.productId }))
             );
-        res.status(200).json({productDetails})
+        return res.status(200).json({productDetails})
     }catch(err){
         console.log(err)
-        res.status(500).json({error: "Couldn't get favorites"})
+        return res.status(500).json({error: "Couldn't get favorites"})
     }
 }
