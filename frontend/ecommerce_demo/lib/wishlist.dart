@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import "package:http/http.dart" as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'service/wishlist_service.dart';
 
 class Wishlist extends StatefulWidget {
   const Wishlist({super.key});
@@ -47,24 +48,6 @@ class _WishlistState extends State<Wishlist> {
       print("User favorites set successfully");
     } else {
       print("Issues with setting the user favorites");
-    }
-  }
-
-  void removeFromFavorites(Map data) async {
-    String? token = await storage.read(key: 'token');
-    final response = await http.delete(
-      Uri.parse("http://10.0.2.2:8000/favorites/remove"),
-      headers: {"Content-Type": "application/json", "Authorization": "$token"},
-      body: jsonEncode(data),
-    );
-    try {
-      if (response.statusCode == 200) {
-        print("product removed");
-      } else {
-        print(response.statusCode);
-      }
-    } catch (err) {
-      print("product failed to be removed from wishlist ${err}");
     }
   }
 
@@ -150,7 +133,7 @@ class _WishlistState extends State<Wishlist> {
                               "userId": userId,
                               "productId": userFavorites[index]["_id"],
                             };
-                            removeFromFavorites(data);
+                            removeFromFavorites(data, storage);
                           },
                           child: Container(
                             decoration: BoxDecoration(color: Color(0xffF5F7F8)),

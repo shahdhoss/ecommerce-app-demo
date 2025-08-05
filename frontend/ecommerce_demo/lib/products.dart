@@ -1,4 +1,4 @@
-import 'package:ecommerce_demo/cart_functions.dart';
+import 'package:ecommerce_demo/service/cart_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import "package:http/http.dart" as http;
@@ -6,7 +6,7 @@ import 'dart:convert';
 import "package:flutter/cupertino.dart";
 import 'package:jwt_decoder/jwt_decoder.dart';
 import "package:http/http.dart" as http;
-import 'wishlist_functions.dart';
+import 'service/wishlist_service.dart';
 
 class Products extends StatefulWidget {
   const Products({super.key});

@@ -1,6 +1,5 @@
 import 'dart:convert';
-
-import 'package:ecommerce_demo/cart_functions.dart';
+import 'package:ecommerce_demo/service/cart_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -18,22 +17,6 @@ class _CartWidgetState extends State<CartWidget> {
   FlutterSecureStorage storage = FlutterSecureStorage();
   List userCart = [];
   String userId = "";
-
-  Future removeFromCart(Map data) async {
-    String? token = await storage.read(key: 'token');
-    final reponse = await http.delete(
-      Uri.parse("http://10.0.2.2:8000/cart/remove"),
-      headers: {"Content-Type": "application/json", "Authorization": "$token"},
-      body: jsonEncode(data),
-    );
-    if (reponse.statusCode == 200) {
-      print("removed from cart");
-      return true;
-    } else {
-      print("Issues with adding to cart");
-      return false;
-    }
-  }
 
   Future setUserId() async {
     String? token = await storage.read(key: "token");
@@ -61,20 +44,6 @@ class _CartWidgetState extends State<CartWidget> {
       });
     } else {
       print("Issues with getting user cart");
-    }
-  }
-
-  void removeItemCompletely(Map data) async {
-    String? token = await storage.read(key: 'token');
-    final reponse = await http.delete(
-      Uri.parse("http://10.0.2.2:8000/cart/remove_completely"),
-      headers: {"Content-Type": "application/json", "Authorization": "$token"},
-      body: jsonEncode(data),
-    );
-    if (reponse.statusCode == 200) {
-      print("removed from cart");
-    } else {
-      print("Issues with adding to cart");
     }
   }
 
@@ -156,7 +125,7 @@ class _CartWidgetState extends State<CartWidget> {
                             "userId": userId,
                             "productId": userCart[index]["_id"],
                           };
-                          if (await removeFromCart(data)) {
+                          if (await removeFromCart(data, storage)) {
                             setState(() {
                               userCart[index]["quantity"] =
                                   userCart[index]["quantity"] - 1;
@@ -171,7 +140,7 @@ class _CartWidgetState extends State<CartWidget> {
                               "userId": userId,
                               "productId": userCart[index]["_id"],
                             };
-                            removeItemCompletely(data);
+                            removeItemCompletely(data, storage);
                           },
                           direction: DismissDirection.endToStart,
                           child: Container(
