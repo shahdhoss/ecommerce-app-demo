@@ -145,7 +145,7 @@ class _ProductsState extends State<Products> {
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            childAspectRatio: 0.74,
+                            childAspectRatio: 0.78,
                           ),
                       itemCount: products.length,
                       itemBuilder: (context, index) {
@@ -241,48 +241,25 @@ class _ProductsState extends State<Products> {
                                 ],
                               ),
                               Padding(
-                                padding: const EdgeInsets.fromLTRB(8, 8, 8, 5),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        products[index]["title"].length > 15
-                                            ? products[index]["title"]
-                                                      .substring(0, 15) +
-                                                  "..."
-                                            : products[index]["title"],
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                          fontFamily: "Poppins",
-                                          fontWeight: FontWeight.w700,
-                                          color: Color(0xff0D4715),
-                                          fontSize: 16.0,
-                                        ),
-                                      ),
+                                padding: const EdgeInsets.fromLTRB(8, 8, 8, 3),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    products[index]["title"].length > 15
+                                        ? products[index]["title"].substring(
+                                                0,
+                                                15,
+                                              ) +
+                                              "..."
+                                        : products[index]["title"],
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      fontFamily: "Poppins",
+                                      fontWeight: FontWeight.w700,
+                                      color: Color(0xff0D4715),
+                                      fontSize: 16.0,
                                     ),
-                                    CircleAvatar(
-                                      radius: 15,
-                                      backgroundColor: Color.fromARGB(
-                                        255,
-                                        215,
-                                        215,
-                                        215,
-                                      ),
-                                      child: IconButton(
-                                        onPressed: () {
-                                          addItemToCart(products[index]["_id"]);
-                                        },
-                                        icon: Icon(
-                                          Icons.shopping_cart,
-                                          size: 15,
-                                          color: Color(0xff0D4715),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ),
                               Padding(
