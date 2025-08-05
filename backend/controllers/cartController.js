@@ -38,6 +38,10 @@ exports.removefromCart = async (req,res) => {
                     return res.status(400).json({ message: "Product removed from cart" });
                 }
                 const updatedProductStock = await Product.findOneAndUpdate({ _id: productId} ,{ $inc: { stock: + 1 } }, { new: true })
+                const cartItemRemovable = await Cart.findOne({userId:userId, productId: productId, quantity:{$eq:0}})
+                if(cartItemRemovable){
+                    await Cart.deleteOne({ _id: cartItemRemovable._id })
+                }
                 return res.status(200).json({item: updatedCartItem, productStock: updatedProductStock})
         }
         else{
@@ -65,5 +69,21 @@ exports.getUserCart= async(req,res)=>{
     }catch(err){
         console.log(err)
         return res.status(500).json({error: "Couldn't get favorites"})
+    }
+}
+
+exports.removeItemfromCartCompletely = async (req, res) => {
+    try {
+        const { userId, productId } = req.body;
+        const item = await Cart.findOne({ userId: userId, productId: productId });
+        if (item) {
+            await Product.findOneAndUpdate({ _id: productId },{ $inc: { stock: item.quantity } },{ new: true });
+            await Cart.deleteOne({ _id: item._id });
+            return res.status(200).json({ message: "Item removed", item: item });
+        }
+        return res.status(404).json({ message: "Item not found" });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Something went wrong" });
     }
 }

@@ -64,6 +64,20 @@ class _CartWidgetState extends State<CartWidget> {
     }
   }
 
+  void removeItemCompletely(Map data) async {
+    String? token = await storage.read(key: 'token');
+    final reponse = await http.delete(
+      Uri.parse("http://10.0.2.2:8000/cart/remove_completely"),
+      headers: {"Content-Type": "application/json", "Authorization": "$token"},
+      body: jsonEncode(data),
+    );
+    if (reponse.statusCode == 200) {
+      print("removed from cart");
+    } else {
+      print("Issues with adding to cart");
+    }
+  }
+
   void initialize() async {
     await setUserId();
     getUserCart(userId);
@@ -150,84 +164,107 @@ class _CartWidgetState extends State<CartWidget> {
                           }
                         }
 
-                        return Container(
-                          decoration: BoxDecoration(color: Color(0xffF5F7F8)),
-                          height: MediaQuery.of(context).size.height * 0.17,
-                          width: MediaQuery.of(context).size.width * 0.1,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.fromLTRB(7, 5, 10, 5),
-                                height:
-                                    MediaQuery.of(context).size.height * 0.15,
-                                width: MediaQuery.of(context).size.width * 0.27,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(8),
-                                  ),
-                                  child: Image.network(
-                                    userCart[index]["picture"],
-                                    fit: BoxFit.cover,
+                        return Dismissible(
+                          key: UniqueKey(),
+                          onDismissed: (direction) {
+                            Map data = {
+                              "userId": userId,
+                              "productId": userCart[index]["_id"],
+                            };
+                            removeItemCompletely(data);
+                          },
+                          direction: DismissDirection.endToStart,
+                          child: Container(
+                            decoration: BoxDecoration(color: Color(0xffF5F7F8)),
+                            height: MediaQuery.of(context).size.height * 0.17,
+                            width: MediaQuery.of(context).size.width * 0.1,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.fromLTRB(7, 5, 10, 5),
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.15,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.27,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(8),
+                                    ),
+                                    child: Image.network(
+                                      userCart[index]["picture"],
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      userCart[index]["title"],
-                                      style: TextStyle(
-                                        fontFamily: "Poppins",
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xff0D4715),
-                                        fontSize: 16.0,
-                                      ),
-                                    ),
-                                    Text(
-                                      "1.5 lbs",
-                                      style: TextStyle(
-                                        fontFamily: "Poppins",
-                                        fontWeight: FontWeight.w500,
-                                        color: Color.fromARGB(
-                                          255,
-                                          126,
-                                          126,
-                                          126,
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        userCart[index]["title"],
+                                        style: TextStyle(
+                                          fontFamily: "Poppins",
+                                          fontWeight: FontWeight.w700,
+                                          color: Color(0xff0D4715),
+                                          fontSize: 16.0,
                                         ),
-                                        fontSize: 15.0,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(0, 0, 3, 0),
-                                child: Column(
-                                  children: [
-                                    IconButton(
-                                      onPressed: incrementQuantity,
-                                      icon: Icon(Icons.add, size: 20),
-                                    ),
-                                    Text(
-                                      userCart[index]["quantity"].toString(),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        color: Color.fromARGB(255, 76, 76, 76),
-                                        fontSize: 17.0,
-                                        fontFamily: "Poppins",
+                                      Text(
+                                        "1.5 lbs",
+                                        style: TextStyle(
+                                          fontFamily: "Poppins",
+                                          fontWeight: FontWeight.w500,
+                                          color: Color.fromARGB(
+                                            255,
+                                            126,
+                                            126,
+                                            126,
+                                          ),
+                                          fontSize: 15.0,
+                                        ),
                                       ),
-                                    ),
-                                    IconButton(
-                                      onPressed: decrementQuantity,
-                                      icon: Icon(Icons.remove, size: 20),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    0,
+                                    0,
+                                    3,
+                                    0,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      IconButton(
+                                        onPressed: incrementQuantity,
+                                        icon: Icon(Icons.add, size: 20),
+                                      ),
+                                      Text(
+                                        userCart[index]["quantity"].toString(),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: Color.fromARGB(
+                                            255,
+                                            76,
+                                            76,
+                                            76,
+                                          ),
+                                          fontSize: 17.0,
+                                          fontFamily: "Poppins",
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: decrementQuantity,
+                                        icon: Icon(Icons.remove, size: 20),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },
