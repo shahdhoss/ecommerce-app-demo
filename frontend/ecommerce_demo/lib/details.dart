@@ -1,7 +1,14 @@
+import 'dart:convert';
 import 'dart:ui';
-
-import 'package:ecommerce_demo/main_scaffold.dart';
+import 'package:ecommerce_demo/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:provider/provider.dart';
+import 'service/cart_service.dart';
+import 'providers/wishlist_provider.dart';
+import 'service/wishlist_service.dart';
 
 class ProductDetails extends StatefulWidget {
   const ProductDetails({super.key});
@@ -11,14 +18,11 @@ class ProductDetails extends StatefulWidget {
 }
 
 class _ProductDetailsState extends State<ProductDetails> {
-  bool isFavorite = false;
+  FlutterSecureStorage storage = FlutterSecureStorage();
   int number = 0;
-  Map data = {};
-  void onTapFavorite() {
-    setState(() {
-      isFavorite = !isFavorite;
-    });
-  }
+  Map productData = {};
+  late String userId;
+  List userFavorites = [];
 
   void incrementNumber() {
     setState(() {
@@ -32,9 +36,24 @@ class _ProductDetailsState extends State<ProductDetails> {
     });
   }
 
+  void initialize() async {
+    userId = await context.read<UserProvider>().getUserId();
+    userFavorites = await context.read<WishlistProvider>().getUserFavorites(
+      userId,
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initialize();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    data = (ModalRoute.of(context)?.settings.arguments as Map?) ?? {};
+    productData = (ModalRoute.of(context)?.settings.arguments as Map?) ?? {};
+    print(productData);
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.fromLTRB(20, 30, 20, 20),
@@ -49,7 +68,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                     color: Color(0xff0D4715),
                     icon: Icon(Icons.arrow_back),
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.pop(context, {
+                        "id": productData["id"],
+                        "isFavorite": productData["isFavorite"],
+                      });
                     },
                   ),
                 ),
@@ -77,7 +99,7 @@ class _ProductDetailsState extends State<ProductDetails> {
               child: ClipRRect(
                 borderRadius: BorderRadius.all(Radius.circular(25)),
                 child: Image.network(
-                  "${data["picture"]}",
+                  "${productData["picture"]}",
                   fit: BoxFit.cover,
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height * 0.3,
@@ -90,7 +112,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    "${data["title"]}",
+                    "${productData["title"]}",
                     style: TextStyle(
                       color: Color(0xff0D4715),
                       fontFamily: "Poppins",
@@ -103,10 +125,30 @@ class _ProductDetailsState extends State<ProductDetails> {
                   backgroundColor: Color(0xffF1F0E9),
                   child: IconButton(
                     color: Color(0xff0D4715),
-                    onPressed: onTapFavorite,
-                    icon: Icon(
-                      !isFavorite ? Icons.favorite_border : Icons.favorite,
-                    ),
+                    onPressed: () {
+                      Map data = {
+                        "userId": userId,
+                        "productId": productData["id"],
+                      };
+                      final isFav = productData["isFavorite"];
+                      if (isFav) {
+                        context.read<WishlistProvider>().removeFromFavorites(
+                          data,
+                          storage,
+                        );
+                      } else {
+                        context.read<WishlistProvider>().addToFavorites(
+                          data,
+                          storage,
+                        );
+                      }
+                      setState(() {
+                        productData["isFavorite"] = !isFav;
+                      });
+                    },
+                    icon: productData["isFavorite"]
+                        ? Icon(Icons.favorite)
+                        : Icon(Icons.favorite_border_rounded),
                   ),
                 ),
               ],
@@ -117,7 +159,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                 Padding(
                   padding: EdgeInsets.fromLTRB(0, 18, 0, 8),
                   child: Text(
-                    "\$${data["price"]}",
+                    "\$${productData["price"]}",
                     style: TextStyle(
                       color: Color(0xff0D4715),
                       fontFamily: "Poppins",

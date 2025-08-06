@@ -2,10 +2,13 @@ import 'package:ecommerce_demo/chat.dart';
 import 'package:ecommerce_demo/details.dart';
 import 'package:ecommerce_demo/main_scaffold.dart';
 import 'package:ecommerce_demo/products.dart';
+import 'package:ecommerce_demo/providers/user_provider.dart';
+import 'package:ecommerce_demo/providers/wishlist_provider.dart';
 import 'package:ecommerce_demo/signup.dart';
 import 'package:ecommerce_demo/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
+import 'package:provider/provider.dart';
 
 const apiKey = "AIzaSyDLFaO7XWKnKa9yLHquEByr4YkmijCek9U";
 void main() async {
@@ -24,16 +27,19 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(scaffoldBackgroundColor: Colors.white),
-      routes: {
-        "/details": (context) => ProductDetails(),
-        "/": (context) => MainScaffold(),
-        "/login": (context) => Login(),
-        "/signup": (context) => Signup(),
-        "/chat": (context) => ChatWidget(),
-        "/products": (context) => Products(),
-      },
+    return MultiProvider(
+      providers: [ChangeNotifierProvider(create: (context) => UserProvider()), ChangeNotifierProvider(create: (context) => WishlistProvider())],
+      child: MaterialApp(
+        theme: ThemeData(scaffoldBackgroundColor: Colors.white),
+        routes: {
+          "/details": (context) => ProductDetails(),
+          "/": (context) => MainScaffold(),
+          "/login": (context) => Login(),
+          "/signup": (context) => Signup(),
+          "/chat": (context) => ChatWidget(),
+          "/products": (context) => Products(),
+        },
+      ),
     );
   }
 }

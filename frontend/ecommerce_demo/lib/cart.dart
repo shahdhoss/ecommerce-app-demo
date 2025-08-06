@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'package:ecommerce_demo/providers/user_provider.dart';
 import 'package:ecommerce_demo/service/cart_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import "package:http/http.dart" as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:provider/provider.dart';
 
 class CartWidget extends StatefulWidget {
   const CartWidget({super.key});
@@ -17,19 +19,6 @@ class _CartWidgetState extends State<CartWidget> {
   FlutterSecureStorage storage = FlutterSecureStorage();
   List userCart = [];
   String userId = "";
-
-  Future setUserId() async {
-    String? token = await storage.read(key: "token");
-    if (token == null || token.isEmpty) {
-      return;
-    }
-    try {
-      Map decodedToken = JwtDecoder.decode(token);
-      userId = decodedToken["userId"];
-    } catch (err) {
-      print(err);
-    }
-  }
 
   void getUserCart(String userId) async {
     String? token = await storage.read(key: 'token');
@@ -48,7 +37,7 @@ class _CartWidgetState extends State<CartWidget> {
   }
 
   void initialize() async {
-    await setUserId();
+    userId = await context.read<UserProvider>().getUserId();
     getUserCart(userId);
   }
 
@@ -88,7 +77,7 @@ class _CartWidgetState extends State<CartWidget> {
               ],
             ),
             Expanded(
-              child: userCart.length == 0
+              child: userCart.isEmpty
                   ? Center(
                       child: Text(
                         "Start adding items to your cart",

@@ -1,12 +1,11 @@
-import 'package:ecommerce_demo/service/cart_service.dart';
+import 'package:ecommerce_demo/providers/user_provider.dart';
+import 'package:ecommerce_demo/providers/wishlist_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import "package:http/http.dart" as http;
 import 'dart:convert';
 import "package:flutter/cupertino.dart";
-import 'package:jwt_decoder/jwt_decoder.dart';
-import "package:http/http.dart" as http;
-import 'service/wishlist_service.dart';
+import 'package:provider/provider.dart';
 
 class Products extends StatefulWidget {
   const Products({super.key});
@@ -22,7 +21,7 @@ class _ProductsState extends State<Products> {
   final storage = FlutterSecureStorage();
   TextEditingController textEditingController = TextEditingController();
 
-  void fetchProducts() async {
+  Future fetchProducts() async {
     final response = await http.get(
       Uri.parse("http://10.0.2.2:8000/products/get"),
       headers: {'Content-Type': 'application/json'},
@@ -31,87 +30,39 @@ class _ProductsState extends State<Products> {
       final Map reponseProducts = jsonDecode(response.body);
       setState(() {
         products = reponseProducts["products"];
-      });
-      for (var i = 0; i < products.length; i++) {
-        products[i]["isFavorite"] = false;
-      }
-    }
-  }
-
-  Future getUserFavorites(String userId) async {
-    String? token = await storage.read(key: 'token');
-    final reponse = await http.get(
-      Uri.parse("http://10.0.2.2:8000/favorites/get/${userId}"),
-      headers: {"Content-Type": "application/json", "Authorization": "$token"},
-    );
-    if (reponse.statusCode == 200) {
-      final decoded = jsonDecode(reponse.body);
-      userFavorites = decoded["products"];
-      print("User favorites set successfully");
-    } else {
-      print("Issues with setting the user favorites");
-    }
-  }
-
-  Future setUserFavorites() async {
-    await getUserFavorites(userId);
-    for (int i = 0; i < userFavorites.length; i++) {
-      for (int j = 0; j < products.length; j++) {
-        if (products[j]["_id"] == userFavorites[i]["productId"]) {
-          products[j]["isFavorite"] = true;
+        for (var i = 0; i < products.length; i++) {
+          products[i]["isFavorite"] = isProductInFavorites(products[i]["_id"]);
         }
-      }
+      });
     }
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  void updateUserFavorites() async {
-    await getUserFavorites(userId);
-    await setUserFavorites();
   }
 
   bool isProductInFavorites(String productId) {
     for (var i = 0; i < userFavorites.length; i++) {
-      if (productId == userFavorites[i]["productId"]) {
+      if (productId == userFavorites[i]["_id"]) {
         return true;
       }
     }
     return false;
   }
 
-  Future setUserId() async {
-    String? token = await storage.read(key: "token");
-    if (token == null || token.isEmpty) {
-      return;
-    }
-    try {
-      Map decodedToken = JwtDecoder.decode(token);
-      userId = decodedToken["userId"];
-    } catch (err) {
-      print(err);
-    }
-  }
-
   void initialize() async {
-    await setUserId();
-    await setUserFavorites();
-  }
-
-  void addItemToCart(String productId) async {
-    Map data = {"userId": userId, "productId": productId};
-    await addToCart(data, storage);
+    userId = await context.read<UserProvider>().getUserId();
+    userFavorites = await context.read<WishlistProvider>().getUserFavorites(
+      userId,
+    );
+    await fetchProducts();
+    setState(() {});
   }
 
   @override
   void initState() {
     super.initState();
-    fetchProducts();
     initialize();
   }
 
   Widget build(BuildContext context) {
+    userFavorites = context.watch<WishlistProvider>().userFavorites;
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -162,17 +113,34 @@ class _ProductsState extends State<Products> {
                                         Radius.circular(15),
                                       ),
                                       child: GestureDetector(
-                                        onTap: () {
-                                          Navigator.pushNamed(
+                                        onTap: () async {
+                                          final result = await Navigator.pushNamed(
                                             context,
                                             '/details',
                                             arguments: {
+                                              "id": products[index]["_id"],
                                               "title": products[index]["title"],
                                               "picture":
                                                   products[index]["picture"],
                                               "price": products[index]["price"],
+                                              "isFavorite":
+                                                  products[index]["isFavorite"],
                                             },
                                           );
+                                          if (result != null && result is Map) {
+                                            final productId = result["id"];
+                                            final isFavorite =
+                                                result["isFavorite"];
+                                            setState(() {
+                                              final i = products.indexWhere(
+                                                (p) => p["_id"] == productId,
+                                              );
+                                              if (i != -1) {
+                                                products[i]["isFavorite"] =
+                                                    isFavorite;
+                                              }
+                                            });
+                                          }
                                         },
                                         child: Image.network(
                                           products[index]["picture"],
@@ -211,22 +179,29 @@ class _ProductsState extends State<Products> {
                                       ),
                                       child: IconButton(
                                         onPressed: () {
-                                          setState(() {
-                                            products[index]["isFavorite"] =
-                                                !products[index]["isFavorite"];
-                                          });
                                           Map data = {
                                             "userId": userId,
                                             "productId": products[index]["_id"],
                                           };
-                                          if (isProductInFavorites(
+                                          final isFav = isProductInFavorites(
                                             products[index]["_id"],
-                                          )) {
-                                            removeFromFavorites(data, storage);
+                                          );
+                                          if (isFav) {
+                                            context
+                                                .read<WishlistProvider>()
+                                                .removeFromFavorites(
+                                                  data,
+                                                  storage,
+                                                );
                                           } else {
-                                            addToFavorites(data, storage);
+                                            context
+                                                .read<WishlistProvider>()
+                                                .addToFavorites(data, storage);
                                           }
-                                          updateUserFavorites();
+                                          setState(() {
+                                            products[index]["isFavorite"] =
+                                                !isFav;
+                                          });
                                         },
                                         icon: Icon(
                                           products[index]["isFavorite"]

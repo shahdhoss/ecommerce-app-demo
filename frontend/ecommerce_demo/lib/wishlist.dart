@@ -1,10 +1,9 @@
-import 'dart:convert';
+import 'package:ecommerce_demo/providers/user_provider.dart';
+import 'package:ecommerce_demo/providers/wishlist_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import "package:http/http.dart" as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'service/wishlist_service.dart';
+import 'package:provider/provider.dart';
 
 class Wishlist extends StatefulWidget {
   const Wishlist({super.key});
@@ -17,43 +16,12 @@ class _WishlistState extends State<Wishlist> {
   final storage = FlutterSecureStorage();
   List userFavorites = [];
   String userId = '';
-  List quantites = [];
-
-  Future setUserId() async {
-    String? token = await storage.read(key: "token");
-    if (token == null || token.isEmpty) {
-      return;
-    }
-    try {
-      Map decodedToken = JwtDecoder.decode(token);
-      userId = decodedToken["userId"];
-    } catch (err) {
-      print(err);
-    }
-  }
-
-  Future getUserFavorites(String userId) async {
-    String? token = await storage.read(key: 'token');
-    final reponse = await http.get(
-      Uri.parse("http://10.0.2.2:8000/favorites/get/details/${userId}"),
-      headers: {"Content-Type": "application/json", "Authorization": "$token"},
-    );
-    if (reponse.statusCode == 200) {
-      final decoded = jsonDecode(reponse.body);
-      setState(() {
-        userFavorites = decoded["productDetails"];
-        quantites = List.filled(userFavorites.length, 0);
-      });
-      print("favorites: ${userFavorites} ");
-      print("User favorites set successfully");
-    } else {
-      print("Issues with setting the user favorites");
-    }
-  }
 
   void initialize() async {
-    await setUserId();
-    await getUserFavorites(userId);
+    userId = await context.read<UserProvider>().getUserId();
+    userFavorites = await context.read<WishlistProvider>().getUserFavorites(
+      userId,
+    );
   }
 
   @override
@@ -64,6 +32,7 @@ class _WishlistState extends State<Wishlist> {
 
   @override
   Widget build(BuildContext context) {
+    userFavorites = context.watch<WishlistProvider>().userFavorites;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.fromLTRB(15, 40, 15, 20),
@@ -111,20 +80,6 @@ class _WishlistState extends State<Wishlist> {
                       },
                       itemCount: userFavorites.length,
                       itemBuilder: (context, index) {
-                        void incrementQuantity() {
-                          setState(() {
-                            quantites[index]++;
-                          });
-                        }
-
-                        void decrementQuantity() {
-                          if (quantites[index] > 0) {
-                            setState(() {
-                              quantites[index]--;
-                            });
-                          }
-                        }
-
                         return Dismissible(
                           key: UniqueKey(),
                           direction: DismissDirection.endToStart,
@@ -133,7 +88,9 @@ class _WishlistState extends State<Wishlist> {
                               "userId": userId,
                               "productId": userFavorites[index]["_id"],
                             };
-                            removeFromFavorites(data, storage);
+                            context
+                                .read<WishlistProvider>()
+                                .removeFromFavorites(data, storage);
                           },
                           child: Container(
                             decoration: BoxDecoration(color: Color(0xffF5F7F8)),
@@ -186,40 +143,6 @@ class _WishlistState extends State<Wishlist> {
                                           ),
                                           fontSize: 15.0,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    0,
-                                    0,
-                                    3,
-                                    0,
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      IconButton(
-                                        onPressed: incrementQuantity,
-                                        icon: Icon(Icons.add, size: 20),
-                                      ),
-                                      Text(
-                                        quantites[index].toString(),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          color: Color.fromARGB(
-                                            255,
-                                            76,
-                                            76,
-                                            76,
-                                          ),
-                                          fontSize: 17.0,
-                                          fontFamily: "Poppins",
-                                        ),
-                                      ),
-                                      IconButton(
-                                        onPressed: decrementQuantity,
-                                        icon: Icon(Icons.remove, size: 20),
                                       ),
                                     ],
                                   ),

@@ -3,7 +3,6 @@ import 'package:ecommerce_demo/details.dart';
 import 'package:ecommerce_demo/home.dart';
 import 'package:ecommerce_demo/login.dart';
 import 'package:ecommerce_demo/products.dart';
-import 'package:ecommerce_demo/profile.dart';
 import 'package:ecommerce_demo/wishlist.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -47,14 +46,18 @@ class _MainScaffoldState extends State<MainScaffold> {
   void checkTokenExpiry() async {
     tokenExpiryState = await isTokenExpired();
     setState(() {
-      pages = [Home(), Products(), tokenExpiryState ? Login() : Wishlist(), CartWidget()];
+      if (tokenExpiryState) {
+        pages = [Home(), Products(), Login()];
+      } else {
+        pages = [Home(), Products(), Wishlist(), CartWidget()];
+      }
     });
   }
 
   @override
   void initState() {
     super.initState();
-    pages = [Home(), Products(), tokenExpiryState ? Login() : Wishlist(), CartWidget()];
+    pages = [Home(), Products(), Wishlist(), CartWidget()];
     checkTokenExpiry();
   }
 

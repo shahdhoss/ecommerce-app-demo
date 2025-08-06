@@ -10,7 +10,11 @@ exports.addtoFavorites = async (req,res) => {
         }
         const favorite = new Favorites({userId, productId})
         await favorite.save()
-        return res.status(200).json({message: "Product added to favorites"})
+        const userFavorites = await Favorites.find({userId: userId})
+        const productDetails = await Promise.all(
+            userFavorites.map(fav => Product.findOne({ _id: fav.productId }))
+            );
+        return res.status(200).json({message: "Product added to favorites", userFavorites: productDetails})
     }
     catch(err){
         console.log(err)
@@ -24,7 +28,11 @@ exports.removefromFavorites = async(req,res)=>{
         
         const deletedProduct = await Favorites.findOneAndDelete({userId, productId})
         if (deletedProduct) {
-           return res.status(200).json({ message: "Favorite removed", data: deletedProduct })
+            const userFavorites = await Favorites.find({userId: userId})
+            const productDetails = await Promise.all(
+            userFavorites.map(fav => Product.findOne({ _id: fav.productId }))
+            );
+           return res.status(200).json({ message: "Favorite removed", userFavorites: productDetails })
         }
         return res.status(404).json({ error: "Favorite not found" })
     }catch(err){
@@ -33,19 +41,7 @@ exports.removefromFavorites = async(req,res)=>{
     }
 }
 
-exports.getAllFavoritesOfUser = async(req,res)=>{
-    try{
-        const  {userId} = req.params
-        const products = await Favorites.find({userId:userId})
-        return res.status(200).json({ products })
-
-    }catch(err){
-        console.log("an error happened: ", err)
-        return res.status(500).json({error: "Couldn't get favorites"})
-    }
-}
-
-exports.getFavoritesDetails= async(req,res)=>{
+exports.getFavoritesDetails = async(req,res)=>{
     try{
         const  {userId} = req.params
         const favorites = await Favorites.find({userId:userId})
