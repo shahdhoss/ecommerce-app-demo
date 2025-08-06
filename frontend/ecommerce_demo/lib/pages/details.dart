@@ -1,14 +1,10 @@
-import 'dart:convert';
 import 'dart:ui';
-import 'package:ecommerce_demo/providers/user_provider.dart';
+import 'package:ecommerce_demo/models/cart_model.dart';
+import 'package:ecommerce_demo/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart' as http;
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:provider/provider.dart';
-import 'service/cart_service.dart';
-import 'providers/wishlist_provider.dart';
-import 'service/wishlist_service.dart';
+import '../models/wishlist_model.dart';
 
 class ProductDetails extends StatefulWidget {
   const ProductDetails({super.key});
@@ -19,28 +15,29 @@ class ProductDetails extends StatefulWidget {
 
 class _ProductDetailsState extends State<ProductDetails> {
   FlutterSecureStorage storage = FlutterSecureStorage();
-  int number = 0;
   Map productData = {};
   late String userId;
   List userFavorites = [];
-
-  void incrementNumber() {
-    setState(() {
-      number += 1;
-    });
-  }
-
-  void decrementNumber() {
-    setState(() {
-      number -= 1;
-    });
-  }
+  List userCart = [];
+  Map userCartProduct = {};
+  int quantity = 0;
 
   void initialize() async {
     userId = await context.read<UserProvider>().getUserId();
     userFavorites = await context.read<WishlistProvider>().getUserFavorites(
       userId,
     );
+    userCart = await context.read<CartProvider>().getCart(userId);
+    setQuantity();
+  }
+
+  void setQuantity() {
+    for (var i = 0; i < userCart.length; i++) {
+      if (userCart[i]["_id"] == productData["id"]) {
+        quantity = userCart[i]["quantity"];
+        break;
+      }
+    }
   }
 
   @override
@@ -53,7 +50,10 @@ class _ProductDetailsState extends State<ProductDetails> {
   @override
   Widget build(BuildContext context) {
     productData = (ModalRoute.of(context)?.settings.arguments as Map?) ?? {};
-    print(productData);
+    userCart = context.watch<CartProvider>().userCart;
+    setQuantity();
+    setState(() {});
+    print("quantity: ${quantity}");
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.fromLTRB(20, 30, 20, 20),
@@ -177,12 +177,22 @@ class _ProductDetailsState extends State<ProductDetails> {
                         backgroundColor: Color(0xffF1F0E9),
                         child: IconButton(
                           color: Color(0xff0D4715),
-                          onPressed: decrementNumber,
+                          onPressed: () {
+                            Map data = {
+                              "userId": userId,
+                              "productId": productData["id"],
+                            };
+                            context.read<CartProvider>().removeFromCart(
+                              data,
+                              storage,
+                            );
+                            setState(() {});
+                          },
                           icon: Icon(Icons.remove),
                         ),
                       ),
                       Text(
-                        "$number",
+                        "${quantity}",
                         style: TextStyle(
                           color: Color(0xff0D4715),
                           fontFamily: "Poppins",
@@ -193,7 +203,17 @@ class _ProductDetailsState extends State<ProductDetails> {
                       CircleAvatar(
                         backgroundColor: Color(0xff0D4715),
                         child: IconButton(
-                          onPressed: incrementNumber,
+                          onPressed: () {
+                            Map data = {
+                              "userId": userId,
+                              "productId": productData["id"],
+                            };
+                            context.read<CartProvider>().addToCart(
+                              data,
+                              storage,
+                            );
+                            setState(() {});
+                          },
                           icon: Icon(Icons.add),
                           color: Color(0xffF1F0E9),
                         ),

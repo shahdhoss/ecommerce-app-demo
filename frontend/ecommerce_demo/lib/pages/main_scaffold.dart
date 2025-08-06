@@ -1,9 +1,8 @@
-import 'package:ecommerce_demo/cart.dart';
-import 'package:ecommerce_demo/details.dart';
-import 'package:ecommerce_demo/home.dart';
-import 'package:ecommerce_demo/login.dart';
-import 'package:ecommerce_demo/products.dart';
-import 'package:ecommerce_demo/wishlist.dart';
+import 'package:ecommerce_demo/pages/cart.dart';
+import 'package:ecommerce_demo/pages/home.dart';
+import 'package:ecommerce_demo/pages/login.dart';
+import 'package:ecommerce_demo/pages/products.dart';
+import 'package:ecommerce_demo/pages/wishlist.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

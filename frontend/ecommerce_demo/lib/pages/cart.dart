@@ -1,11 +1,8 @@
-import 'dart:convert';
-import 'package:ecommerce_demo/providers/user_provider.dart';
-import 'package:ecommerce_demo/service/cart_service.dart';
+import 'package:ecommerce_demo/models/cart_model.dart';
+import 'package:ecommerce_demo/models/user_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import "package:http/http.dart" as http;
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:provider/provider.dart';
 
 class CartWidget extends StatefulWidget {
@@ -20,25 +17,10 @@ class _CartWidgetState extends State<CartWidget> {
   List userCart = [];
   String userId = "";
 
-  void getUserCart(String userId) async {
-    String? token = await storage.read(key: 'token');
-    final reponse = await http.get(
-      Uri.parse("http://10.0.2.2:8000/cart/get/${userId}"),
-      headers: {"Content-Type": "application/json", "Authorization": "$token"},
-    );
-    if (reponse.statusCode == 200) {
-      final decoded = jsonDecode(reponse.body);
-      setState(() {
-        userCart = decoded["cart"];
-      });
-    } else {
-      print("Issues with getting user cart");
-    }
-  }
-
   void initialize() async {
     userId = await context.read<UserProvider>().getUserId();
-    getUserCart(userId);
+    userCart = await context.read<CartProvider>().getCart(userId);
+    print(userCart);
   }
 
   @override
@@ -49,6 +31,7 @@ class _CartWidgetState extends State<CartWidget> {
 
   @override
   Widget build(BuildContext context) {
+    userCart = context.watch<CartProvider>().userCart;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.fromLTRB(15, 40, 15, 20),
@@ -96,40 +79,20 @@ class _CartWidgetState extends State<CartWidget> {
                       },
                       itemCount: userCart.length,
                       itemBuilder: (context, index) {
-                        void incrementQuantity() async {
-                          Map data = {
-                            "userId": userId,
-                            "productId": userCart[index]["_id"],
-                          };
-                          if (await addToCart(data, storage)) {
-                            setState(() {
-                              userCart[index]["quantity"] =
-                                  userCart[index]["quantity"] + 1;
-                            });
-                          }
-                        }
-
-                        void decrementQuantity() async {
-                          Map data = {
-                            "userId": userId,
-                            "productId": userCart[index]["_id"],
-                          };
-                          if (await removeFromCart(data, storage)) {
-                            setState(() {
-                              userCart[index]["quantity"] =
-                                  userCart[index]["quantity"] - 1;
-                            });
-                          }
-                        }
-
                         return Dismissible(
                           key: UniqueKey(),
-                          onDismissed: (direction) {
+                          onDismissed: (direction) async {
                             Map data = {
                               "userId": userId,
                               "productId": userCart[index]["_id"],
                             };
-                            removeItemCompletely(data, storage);
+
+                            bool success = await context
+                                .read<CartProvider>()
+                                .removeItemCompletely(data, storage);
+                            if (success) {
+                              setState(() {});
+                            }
                           },
                           direction: DismissDirection.endToStart,
                           child: Container(
@@ -197,7 +160,33 @@ class _CartWidgetState extends State<CartWidget> {
                                   child: Column(
                                     children: [
                                       IconButton(
-                                        onPressed: incrementQuantity,
+                                        onPressed: () async {
+                                          Map data = {
+                                            "userId": userId,
+                                            "productId": userCart[index]["_id"],
+                                          };
+
+                                          final success = await context
+                                              .read<CartProvider>()
+                                              .addToCart(data, storage);
+                                          if (success) {
+                                            await context
+                                                .read<CartProvider>()
+                                                .getCart(userId);
+                                            setState(() {});
+                                          } else {
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  "Product out of stock",
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+
                                         icon: Icon(Icons.add, size: 20),
                                       ),
                                       Text(
@@ -215,7 +204,21 @@ class _CartWidgetState extends State<CartWidget> {
                                         ),
                                       ),
                                       IconButton(
-                                        onPressed: decrementQuantity,
+                                        onPressed: () async {
+                                          Map data = {
+                                            "userId": userId,
+                                            "productId": userCart[index]["_id"],
+                                          };
+                                          final success = await context
+                                              .read<CartProvider>()
+                                              .removeFromCart(data, storage);
+                                          if (success) {
+                                            await context
+                                                .read<CartProvider>()
+                                                .getCart(userId);
+                                            setState(() {});
+                                          }
+                                        },
                                         icon: Icon(Icons.remove, size: 20),
                                       ),
                                     ],

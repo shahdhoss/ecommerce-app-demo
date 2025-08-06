@@ -1,11 +1,12 @@
-import 'package:ecommerce_demo/chat.dart';
-import 'package:ecommerce_demo/details.dart';
-import 'package:ecommerce_demo/main_scaffold.dart';
-import 'package:ecommerce_demo/products.dart';
-import 'package:ecommerce_demo/providers/user_provider.dart';
-import 'package:ecommerce_demo/providers/wishlist_provider.dart';
-import 'package:ecommerce_demo/signup.dart';
-import 'package:ecommerce_demo/login.dart';
+import 'package:ecommerce_demo/pages/chat.dart';
+import 'package:ecommerce_demo/pages/details.dart';
+import 'package:ecommerce_demo/pages/main_scaffold.dart';
+import 'package:ecommerce_demo/pages/products.dart';
+import 'package:ecommerce_demo/models/cart_model.dart';
+import 'package:ecommerce_demo/models/user_model.dart';
+import 'package:ecommerce_demo/models/wishlist_model.dart';
+import 'package:ecommerce_demo/pages/signup.dart';
+import 'package:ecommerce_demo/pages/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +29,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (context) => UserProvider()), ChangeNotifierProvider(create: (context) => WishlistProvider())],
+      providers: [ChangeNotifierProvider(create: (context) => UserProvider()), ChangeNotifierProvider(create: (context) => WishlistProvider()), ChangeNotifierProvider(create: (context) => CartProvider())],
       child: MaterialApp(
         theme: ThemeData(scaffoldBackgroundColor: Colors.white),
         routes: {

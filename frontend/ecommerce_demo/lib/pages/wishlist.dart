@@ -1,5 +1,5 @@
-import 'package:ecommerce_demo/providers/user_provider.dart';
-import 'package:ecommerce_demo/providers/wishlist_provider.dart';
+import 'package:ecommerce_demo/models/user_model.dart';
+import 'package:ecommerce_demo/models/wishlist_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
