@@ -394,7 +394,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: Text(
-                        "100% satisfaction guaranteed. Missing, poor items, poor quality or delivery issues? We'll resolve everything quickly, with care and professionalism.",
+                        productData["description"],
                         textAlign: TextAlign.start,
                         style: TextStyle(
                           color: Color(0xff6B8A88),

@@ -3,6 +3,7 @@ import 'package:ecommerce_demo/pages/home.dart';
 import 'package:ecommerce_demo/pages/login.dart';
 import 'package:ecommerce_demo/pages/products.dart';
 import 'package:ecommerce_demo/pages/wishlist.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -21,6 +22,8 @@ class _MainScaffoldState extends State<MainScaffold> {
   bool tokenExpiryState = true;
   List pages = [];
   int index = 0;
+  bool isLoaded = false;
+
   void onTapped(int tappedIndex) {
     setState(() {
       index = tappedIndex;
@@ -28,26 +31,33 @@ class _MainScaffoldState extends State<MainScaffold> {
   }
 
   void checkTokenExpiry() async {
-    tokenExpiryState = await isTokenExpired(storage);
-    setState(() {
-      if (tokenExpiryState) {
-        pages = [Home(), Products(), Login()];
-      } else {
-        pages = [Home(), Products(), Wishlist(), CartWidget()];
+    try {
+      tokenExpiryState = await isTokenExpired(storage);
+      setState(() {
+        if (tokenExpiryState) {
+          pages = [Home(), Products(), Login()];
+        } else {
+          pages = [Home(), Products(), Wishlist(), CartWidget()];
+        }
+      });
+    } catch (e) {
+      print('Error during initialization: $e');
+    } finally {
+      if (mounted) {
+        isLoaded = true;
       }
-    });
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    pages = [Home(), Products(), Wishlist(), CartWidget()];
     checkTokenExpiry();
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
-      body: pages[index],
+      body: !isLoaded ? CupertinoActivityIndicator() : pages[index],
       bottomNavigationBar: SizedBox(
         height: 70,
         child: GNav(
@@ -65,17 +75,18 @@ class _MainScaffoldState extends State<MainScaffold> {
               index = indexInput;
             });
           },
-          tabs: [
-            GButton(icon: Icons.home, text: "Home"),
-            GButton(icon: Icons.search, text: "Browse"),
-            tokenExpiryState
-                ? GButton(icon: Icons.person_2_rounded, text: "Login")
-                : GButton(
-                    icon: Icons.favorite_border_rounded,
-                    text: "Wishlist",
-                  ),
-            GButton(icon: Icons.shopping_cart, text: "Cart"),
-          ],
+          tabs: tokenExpiryState
+              ? [
+                  GButton(icon: Icons.home, text: "Home"),
+                  GButton(icon: Icons.search, text: "Browse"),
+                  GButton(icon: Icons.person_2_rounded, text: "Login"),
+                ]
+              : [
+                  GButton(icon: Icons.home, text: "Home"),
+                  GButton(icon: Icons.search, text: "Browse"),
+                  GButton(icon: Icons.favorite_border, text: "Wishlist"),
+                  GButton(icon: Icons.shopping_cart, text: "Cart"),
+                ],
         ),
       ),
       floatingActionButton: FloatingActionButton(

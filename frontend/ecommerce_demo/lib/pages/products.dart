@@ -21,7 +21,8 @@ class _ProductsState extends State<Products> {
   String userId = '';
   final storage = FlutterSecureStorage();
   TextEditingController textEditingController = TextEditingController();
-  bool tokenExpired = false;
+  bool tokenExpired = true;
+  bool isLoaded = false;
 
   Future fetchProducts() async {
     final response = await http.get(
@@ -30,6 +31,7 @@ class _ProductsState extends State<Products> {
     );
     if (response.statusCode == 200) {
       final Map reponseProducts = jsonDecode(response.body);
+      print("products: ${reponseProducts["products"]}");
       setState(() {
         products = reponseProducts["products"];
         for (var i = 0; i < products.length; i++) {
@@ -60,6 +62,11 @@ class _ProductsState extends State<Products> {
       setState(() {});
     } catch (e) {
       print('Error during initialization: $e');
+    } finally {
+      if (mounted) {
+        isLoaded = true;
+        setState(() {});
+      }
     }
   }
 
@@ -70,7 +77,7 @@ class _ProductsState extends State<Products> {
   }
 
   Widget build(BuildContext context) {
-    if (!tokenExpired) {
+    if (tokenExpired) {
       userFavorites = context.watch<WishlistProvider>().userFavorites;
     }
     return Scaffold(
@@ -100,7 +107,7 @@ class _ProductsState extends State<Products> {
               ),
             ),
             Expanded(
-              child: products.isEmpty
+              child: !isLoaded
                   ? Center(child: CupertinoActivityIndicator())
                   : GridView.builder(
                       gridDelegate:
@@ -135,6 +142,10 @@ class _ProductsState extends State<Products> {
                                               "price": products[index]["price"],
                                               "isFavorite":
                                                   products[index]["isFavorite"],
+                                              "description":
+                                                  products[index]["description"],
+                                              "rating":
+                                                  products[index]["rating"],
                                             },
                                           );
                                           if (result != null && result is Map) {
@@ -189,7 +200,7 @@ class _ProductsState extends State<Products> {
                                       ),
                                       child: IconButton(
                                         onPressed: () {
-                                          if (!tokenExpired) {
+                                          if (tokenExpired) {
                                             Map data = {
                                               "userId": userId,
                                               "productId":
