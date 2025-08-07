@@ -1,3 +1,4 @@
+import 'package:ecommerce_demo/models/products_model.dart';
 import 'package:ecommerce_demo/pages/chat.dart';
 import 'package:ecommerce_demo/pages/details.dart';
 import 'package:ecommerce_demo/pages/main_scaffold.dart';
@@ -29,7 +30,12 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (context) => UserProvider()), ChangeNotifierProvider(create: (context) => WishlistProvider()), ChangeNotifierProvider(create: (context) => CartProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(create: (context) => WishlistProvider()),
+        ChangeNotifierProvider(create: (context) => CartProvider()),
+        ChangeNotifierProvider(create: (context) => ProductsModel()),
+      ],
       child: MaterialApp(
         theme: ThemeData(scaffoldBackgroundColor: Colors.white),
         routes: {

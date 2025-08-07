@@ -1,6 +1,9 @@
+import 'package:ecommerce_demo/models/products_model.dart';
+import 'package:ecommerce_demo/pages/details.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import "package:http/http.dart" as http;
 import 'dart:convert';
@@ -17,26 +20,18 @@ class _HomeState extends State<Home> {
   TextEditingController search = TextEditingController();
   final pageController = PageController();
 
-  void fetchProducts() async {
-    final response = await http.get(
-      Uri.parse("http://10.0.2.2:8000/products/get"),
-      headers: {'Content-Type': 'application/json'},
-    );
-    if (response.statusCode == 200) {
-      final Map reponseProducts = jsonDecode(response.body);
-      setState(() {
-        products = reponseProducts["products"];
-      });
-    }
+  void initialize() async {
+    products = await context.read<ProductsModel>().fetchProducts();
   }
 
   @override
   void initState() {
     super.initState();
-    fetchProducts();
+    initialize();
   }
 
   Widget build(BuildContext context) {
+    products = context.watch<ProductsModel>().products;
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.fromLTRB(10, 30, 10, 0),
