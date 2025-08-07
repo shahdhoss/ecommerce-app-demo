@@ -16,7 +16,7 @@ class _WishlistState extends State<Wishlist> {
   final storage = FlutterSecureStorage();
   List userFavorites = [];
   String userId = '';
-  bool tokenExpired = true;
+  bool tokenExpired = false;
   bool isLoading = true;
 
   void initialize() async {
@@ -81,12 +81,14 @@ class _WishlistState extends State<Wishlist> {
               child: isLoading
                   ? Center(child: CupertinoActivityIndicator())
                   : tokenExpired
-                  ? Text(
-                      "Login to start seeing your favorited items",
-                      style: TextStyle(
-                        fontFamily: "Poppins",
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
+                  ? Center(
+                      child: Text(
+                        "Login to start seeing your favorited items",
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     )
                   : userFavorites.isEmpty

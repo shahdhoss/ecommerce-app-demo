@@ -76,7 +76,7 @@ class _HomeState extends State<Home> {
                     child: SmoothPageIndicator(
                       controller: pageController,
                       count: 4,
-                      effect: WormEffect(
+                      effect: ExpandingDotsEffect(
                         dotColor: Color(0xffF1F0E9),
                         dotHeight: 8,
                         dotWidth: 8,

@@ -21,7 +21,7 @@ class _ProductsState extends State<Products> {
   String userId = '';
   final storage = FlutterSecureStorage();
   TextEditingController textEditingController = TextEditingController();
-  bool tokenExpired = true;
+  bool tokenExpired = false;
 
   Future fetchProducts() async {
     final response = await http.get(
