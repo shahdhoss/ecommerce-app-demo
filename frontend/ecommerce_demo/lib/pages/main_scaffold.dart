@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import "package:jwt_decoder/jwt_decoder.dart";
+import '../utils/token.dart';
 
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
@@ -27,23 +27,8 @@ class _MainScaffoldState extends State<MainScaffold> {
     });
   }
 
-  Future isTokenExpired() async {
-    String? token = await storage.read(key: "token");
-    if (token == null || token.isEmpty) {
-      return true;
-    }
-    try {
-      Map decodedToken = JwtDecoder.decode(token);
-      DateTime expirationDate = JwtDecoder.getExpirationDate(token);
-      return expirationDate.isBefore(DateTime.now());
-    } catch (err) {
-      print(err);
-      return true;
-    }
-  }
-
   void checkTokenExpiry() async {
-    tokenExpiryState = await isTokenExpired();
+    tokenExpiryState = await isTokenExpired(storage);
     setState(() {
       if (tokenExpiryState) {
         pages = [Home(), Products(), Login()];

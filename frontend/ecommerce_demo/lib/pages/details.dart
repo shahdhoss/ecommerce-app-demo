@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:ecommerce_demo/models/cart_model.dart';
 import 'package:ecommerce_demo/models/user_model.dart';
+import 'package:ecommerce_demo/utils/token.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
@@ -21,14 +23,30 @@ class _ProductDetailsState extends State<ProductDetails> {
   List userCart = [];
   Map userCartProduct = {};
   int quantity = 0;
+  bool tokenExpired = true;
+  bool isLoading = true;
 
   void initialize() async {
-    userId = await context.read<UserProvider>().getUserId();
-    userFavorites = await context.read<WishlistProvider>().getUserFavorites(
-      userId,
-    );
-    userCart = await context.read<CartProvider>().getCart(userId);
-    setQuantity();
+    try {
+      userId = await context.read<UserProvider>().getUserId();
+      tokenExpired = await isTokenExpired(storage);
+      if (!tokenExpired) {
+        userFavorites = await context.read<WishlistProvider>().getUserFavorites(
+          userId,
+        );
+        userCart = await context.read<CartProvider>().getCart(userId);
+        setQuantity();
+      }
+    } catch (e) {
+      print('Error during initialization: $e');
+      tokenExpired = true;
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
   }
 
   void setQuantity() {
@@ -50,10 +68,12 @@ class _ProductDetailsState extends State<ProductDetails> {
   @override
   Widget build(BuildContext context) {
     productData = (ModalRoute.of(context)?.settings.arguments as Map?) ?? {};
-    userCart = context.watch<CartProvider>().userCart;
-    setQuantity();
-    setState(() {});
-    print("quantity: ${quantity}");
+    if (!tokenExpired) {
+      userCart = context.watch<CartProvider>().userCart;
+      setQuantity();
+      setState(() {});
+      print("quantity: ${quantity}");
+    }
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.fromLTRB(20, 30, 20, 20),
@@ -94,17 +114,21 @@ class _ProductDetailsState extends State<ProductDetails> {
                 ),
               ],
             ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(25)),
-                child: Image.network(
-                  "${productData["picture"]}",
-                  fit: BoxFit.cover,
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.3,
-                ),
-              ),
+            Expanded(
+              child: isLoading
+                  ? Center(child: CupertinoActivityIndicator())
+                  : Padding(
+                      padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(25)),
+                        child: Image.network(
+                          "${productData["picture"]}",
+                          fit: BoxFit.cover,
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * 0.3,
+                        ),
+                      ),
+                    ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -126,25 +150,41 @@ class _ProductDetailsState extends State<ProductDetails> {
                   child: IconButton(
                     color: Color(0xff0D4715),
                     onPressed: () {
-                      Map data = {
-                        "userId": userId,
-                        "productId": productData["id"],
-                      };
-                      final isFav = productData["isFavorite"];
-                      if (isFav) {
-                        context.read<WishlistProvider>().removeFromFavorites(
-                          data,
-                          storage,
-                        );
+                      if (!tokenExpired) {
+                        Map data = {
+                          "userId": userId,
+                          "productId": productData["id"],
+                        };
+                        final isFav = productData["isFavorite"];
+                        if (isFav) {
+                          context.read<WishlistProvider>().removeFromFavorites(
+                            data,
+                            storage,
+                          );
+                        } else {
+                          context.read<WishlistProvider>().addToFavorites(
+                            data,
+                            storage,
+                          );
+                        }
+                        setState(() {
+                          productData["isFavorite"] = !isFav;
+                        });
                       } else {
-                        context.read<WishlistProvider>().addToFavorites(
-                          data,
-                          storage,
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Colors.red[700],
+                            content: Text(
+                              "You have to be logged in first",
+                              style: TextStyle(
+                                fontFamily: "Poppins",
+                                fontSize: 15,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                         );
                       }
-                      setState(() {
-                        productData["isFavorite"] = !isFav;
-                      });
                     },
                     icon: productData["isFavorite"]
                         ? Icon(Icons.favorite)
@@ -178,15 +218,31 @@ class _ProductDetailsState extends State<ProductDetails> {
                         child: IconButton(
                           color: Color(0xff0D4715),
                           onPressed: () {
-                            Map data = {
-                              "userId": userId,
-                              "productId": productData["id"],
-                            };
-                            context.read<CartProvider>().removeFromCart(
-                              data,
-                              storage,
-                            );
-                            setState(() {});
+                            if (!tokenExpired) {
+                              Map data = {
+                                "userId": userId,
+                                "productId": productData["id"],
+                              };
+                              context.read<CartProvider>().removeFromCart(
+                                data,
+                                storage,
+                              );
+                              setState(() {});
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: Colors.red[700],
+                                  content: Text(
+                                    "You have to be logged in first",
+                                    style: TextStyle(
+                                      fontFamily: "Poppins",
+                                      fontSize: 15,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
                           },
                           icon: Icon(Icons.remove),
                         ),
@@ -203,16 +259,50 @@ class _ProductDetailsState extends State<ProductDetails> {
                       CircleAvatar(
                         backgroundColor: Color(0xff0D4715),
                         child: IconButton(
-                          onPressed: () {
-                            Map data = {
-                              "userId": userId,
-                              "productId": productData["id"],
-                            };
-                            context.read<CartProvider>().addToCart(
-                              data,
-                              storage,
-                            );
-                            setState(() {});
+                          onPressed: () async {
+                            if (!tokenExpired) {
+                              Map data = {
+                                "userId": userId,
+                                "productId": productData["id"],
+                              };
+                              final success = await context
+                                  .read<CartProvider>()
+                                  .addToCart(data, storage);
+                              if (success) {
+                                await context.read<CartProvider>().getCart(
+                                  userId,
+                                );
+                                setState(() {});
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: Colors.red[700],
+                                    content: Text(
+                                      "Product out of stock",
+                                      style: TextStyle(
+                                        fontFamily: "Poppins",
+                                        fontSize: 15,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: Colors.red[700],
+                                  content: Text(
+                                    "You have to be logged in first",
+                                    style: TextStyle(
+                                      fontFamily: "Poppins",
+                                      fontSize: 15,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
                           },
                           icon: Icon(Icons.add),
                           color: Color(0xffF1F0E9),

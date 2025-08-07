@@ -16,12 +16,27 @@ class _WishlistState extends State<Wishlist> {
   final storage = FlutterSecureStorage();
   List userFavorites = [];
   String userId = '';
+  bool tokenExpired = true;
+  bool isLoading = true;
 
   void initialize() async {
-    userId = await context.read<UserProvider>().getUserId();
-    userFavorites = await context.read<WishlistProvider>().getUserFavorites(
-      userId,
-    );
+    try {
+      userId = await context.read<UserProvider>().getUserId();
+      if (!tokenExpired) {
+        userFavorites = await context.read<WishlistProvider>().getUserFavorites(
+          userId,
+        );
+      }
+    } catch (e) {
+      print('Error during initialization: $e');
+      tokenExpired = true;
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -32,7 +47,9 @@ class _WishlistState extends State<Wishlist> {
 
   @override
   Widget build(BuildContext context) {
-    userFavorites = context.watch<WishlistProvider>().userFavorites;
+    if (!tokenExpired) {
+      userFavorites = context.watch<WishlistProvider>().userFavorites;
+    }
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.fromLTRB(15, 40, 15, 20),
@@ -61,7 +78,18 @@ class _WishlistState extends State<Wishlist> {
               ],
             ),
             Expanded(
-              child: userFavorites.length == 0
+              child: isLoading
+                  ? Center(child: CupertinoActivityIndicator())
+                  : tokenExpired
+                  ? Text(
+                      "Login to start seeing your favorited items",
+                      style: TextStyle(
+                        fontFamily: "Poppins",
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )
+                  : userFavorites.isEmpty
                   ? Center(
                       child: Text(
                         "Start saving your favorite items",
@@ -72,8 +100,6 @@ class _WishlistState extends State<Wishlist> {
                         ),
                       ),
                     )
-                  : userFavorites.isEmpty
-                  ? Center(child: CupertinoActivityIndicator())
                   : ListView.separated(
                       separatorBuilder: (context, index) {
                         return SizedBox(height: 15);

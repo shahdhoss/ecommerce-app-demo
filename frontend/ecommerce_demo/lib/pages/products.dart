@@ -1,5 +1,6 @@
 import 'package:ecommerce_demo/models/user_model.dart';
 import 'package:ecommerce_demo/models/wishlist_model.dart';
+import 'package:ecommerce_demo/utils/token.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import "package:http/http.dart" as http;
@@ -20,6 +21,7 @@ class _ProductsState extends State<Products> {
   String userId = '';
   final storage = FlutterSecureStorage();
   TextEditingController textEditingController = TextEditingController();
+  bool tokenExpired = true;
 
   Future fetchProducts() async {
     final response = await http.get(
@@ -47,12 +49,18 @@ class _ProductsState extends State<Products> {
   }
 
   void initialize() async {
-    userId = await context.read<UserProvider>().getUserId();
-    userFavorites = await context.read<WishlistProvider>().getUserFavorites(
-      userId,
-    );
-    await fetchProducts();
-    setState(() {});
+    try {
+      userId = await context.read<UserProvider>().getUserId();
+      if (!tokenExpired) {
+        userFavorites = await context.read<WishlistProvider>().getUserFavorites(
+          userId,
+        );
+      }
+      await fetchProducts();
+      setState(() {});
+    } catch (e) {
+      print('Error during initialization: $e');
+    }
   }
 
   @override
@@ -62,7 +70,9 @@ class _ProductsState extends State<Products> {
   }
 
   Widget build(BuildContext context) {
-    userFavorites = context.watch<WishlistProvider>().userFavorites;
+    if (!tokenExpired) {
+      userFavorites = context.watch<WishlistProvider>().userFavorites;
+    }
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -179,29 +189,52 @@ class _ProductsState extends State<Products> {
                                       ),
                                       child: IconButton(
                                         onPressed: () {
-                                          Map data = {
-                                            "userId": userId,
-                                            "productId": products[index]["_id"],
-                                          };
-                                          final isFav = isProductInFavorites(
-                                            products[index]["_id"],
-                                          );
-                                          if (isFav) {
-                                            context
-                                                .read<WishlistProvider>()
-                                                .removeFromFavorites(
-                                                  data,
-                                                  storage,
-                                                );
+                                          if (!tokenExpired) {
+                                            Map data = {
+                                              "userId": userId,
+                                              "productId":
+                                                  products[index]["_id"],
+                                            };
+                                            final isFav = isProductInFavorites(
+                                              products[index]["_id"],
+                                            );
+                                            if (isFav) {
+                                              context
+                                                  .read<WishlistProvider>()
+                                                  .removeFromFavorites(
+                                                    data,
+                                                    storage,
+                                                  );
+                                            } else {
+                                              context
+                                                  .read<WishlistProvider>()
+                                                  .addToFavorites(
+                                                    data,
+                                                    storage,
+                                                  );
+                                            }
+                                            setState(() {
+                                              products[index]["isFavorite"] =
+                                                  !isFav;
+                                            });
                                           } else {
-                                            context
-                                                .read<WishlistProvider>()
-                                                .addToFavorites(data, storage);
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                backgroundColor:
+                                                    Colors.red[700],
+                                                content: Text(
+                                                  "You have to be logged in first",
+                                                  style: TextStyle(
+                                                    fontFamily: "Poppins",
+                                                    fontSize: 15,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
                                           }
-                                          setState(() {
-                                            products[index]["isFavorite"] =
-                                                !isFav;
-                                          });
                                         },
                                         icon: Icon(
                                           products[index]["isFavorite"]

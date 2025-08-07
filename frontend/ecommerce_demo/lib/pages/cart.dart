@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
+import "../utils/token.dart";
 
 class CartWidget extends StatefulWidget {
   const CartWidget({super.key});
@@ -16,11 +17,27 @@ class _CartWidgetState extends State<CartWidget> {
   FlutterSecureStorage storage = FlutterSecureStorage();
   List userCart = [];
   String userId = "";
+  bool tokenExpired = false;
+  bool isLoading = true;
 
   void initialize() async {
-    userId = await context.read<UserProvider>().getUserId();
-    userCart = await context.read<CartProvider>().getCart(userId);
-    print(userCart);
+    try {
+      userId = await context.read<UserProvider>().getUserId();
+      tokenExpired = await isTokenExpired(storage);
+      if (!tokenExpired) {
+        userCart = await context.read<CartProvider>().getCart(userId);
+        print(userCart);
+      }
+    } catch (e) {
+      print('Error during initialization: $e');
+      tokenExpired = true;
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -31,7 +48,9 @@ class _CartWidgetState extends State<CartWidget> {
 
   @override
   Widget build(BuildContext context) {
-    userCart = context.watch<CartProvider>().userCart;
+    if (!tokenExpired) {
+      userCart = context.watch<CartProvider>().userCart;
+    }
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.fromLTRB(15, 40, 15, 20),
@@ -60,7 +79,9 @@ class _CartWidgetState extends State<CartWidget> {
               ],
             ),
             Expanded(
-              child: userCart.isEmpty
+              child: isLoading
+                  ? Center(child: CupertinoActivityIndicator())
+                  : userCart.isEmpty
                   ? Center(
                       child: Text(
                         "Start adding items to your cart",
@@ -71,8 +92,15 @@ class _CartWidgetState extends State<CartWidget> {
                         ),
                       ),
                     )
-                  : userCart.isEmpty
-                  ? Center(child: CupertinoActivityIndicator())
+                  : tokenExpired
+                  ? Text(
+                      "Login to start seeing your cart items",
+                      style: TextStyle(
+                        fontFamily: "Poppins",
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )
                   : ListView.separated(
                       separatorBuilder: (context, index) {
                         return SizedBox(height: 15);
@@ -179,8 +207,15 @@ class _CartWidgetState extends State<CartWidget> {
                                               context,
                                             ).showSnackBar(
                                               SnackBar(
+                                                backgroundColor:
+                                                    Colors.red[700],
                                                 content: Text(
                                                   "Product out of stock",
+                                                  style: TextStyle(
+                                                    fontFamily: "Poppins",
+                                                    fontSize: 15,
+                                                    color: Colors.white,
+                                                  ),
                                                 ),
                                               ),
                                             );
