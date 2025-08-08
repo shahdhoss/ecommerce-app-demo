@@ -19,9 +19,14 @@ class _HomeState extends State<Home> {
   List products = [];
   TextEditingController search = TextEditingController();
   final pageController = PageController();
+  bool isLoaded = false;
 
   void initialize() async {
     products = await context.read<ProductsModel>().fetchProducts();
+    if (mounted) {
+      isLoaded = true;
+      setState(() {});
+    }
   }
 
   @override
@@ -316,8 +321,8 @@ class _HomeState extends State<Home> {
               ],
             ),
             Expanded(
-              child: products.isEmpty
-                  ? Center(child: CupertinoActivityIndicator())
+              child: !isLoaded
+                  ? Center(child:  CupertinoActivityIndicator())
                   : ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: 5,

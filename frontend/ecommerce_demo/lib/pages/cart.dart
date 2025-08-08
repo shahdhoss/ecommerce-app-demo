@@ -3,6 +3,7 @@ import 'package:ecommerce_demo/models/user_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import "../utils/token.dart";
 
@@ -58,7 +59,17 @@ class _CartWidgetState extends State<CartWidget> {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                CircleAvatar(
+                  backgroundColor: Color(0xffF1F0E9),
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(Icons.arrow_back, color: Color(0xff0D4715)),
+                  ),
+                ),
                 Text(
                   "Cart",
                   textAlign: TextAlign.center,
@@ -82,15 +93,52 @@ class _CartWidgetState extends State<CartWidget> {
               child: isLoading
                   ? Center(child: CupertinoActivityIndicator())
                   : userCart.isEmpty
-                  ? Center(
-                      child: Text(
-                        "Start adding items to your cart",
-                        style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Image.network(
+                          "https://i.pinimg.com/736x/8d/49/0d/8d490d9ad19b49090945acd7cf7895d9.jpg",
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          width: MediaQuery.of(context).size.width * 0.9,
                         ),
-                      ),
+                        Text(
+                          "Empty basket",
+                          style: TextStyle(
+                            fontFamily: "Poppins",
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xff0D4715),
+                          ),
+                        ),
+
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                          child: Center(
+                            child: Text(
+                              "Some of the things you like are on \n your Wishlist, don't miss out!",
+                              style: TextStyle(
+                                fontFamily: "Poppins",
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xff0D4715),
+                              ),
+                            ),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {},
+                          child: Text(
+                            "Check your wishlist",
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
+                            ),
+                          ),
+                        ),
+                      ],
                     )
                   : tokenExpired
                   ? Text(
@@ -124,11 +172,23 @@ class _CartWidgetState extends State<CartWidget> {
                           },
                           direction: DismissDirection.endToStart,
                           child: Container(
-                            decoration: BoxDecoration(color: Color(0xffF5F7F8)),
+                            decoration: BoxDecoration(
+                              color: Color(0xffF5F7F8),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  spreadRadius: 2,
+                                  blurRadius: 7,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+
                             height: MediaQuery.of(context).size.height * 0.17,
                             width: MediaQuery.of(context).size.width * 0.1,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Container(
                                   padding: EdgeInsets.fromLTRB(7, 5, 10, 5),
@@ -148,7 +208,8 @@ class _CartWidgetState extends State<CartWidget> {
                                 ),
                                 Expanded(
                                   child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -161,103 +222,154 @@ class _CartWidgetState extends State<CartWidget> {
                                           fontSize: 16.0,
                                         ),
                                       ),
+
                                       Text(
-                                        "1.5 lbs",
+                                        "\$${userCart[index]["price"]}",
                                         style: TextStyle(
                                           fontFamily: "Poppins",
                                           fontWeight: FontWeight.w500,
-                                          color: Color.fromARGB(
-                                            255,
-                                            126,
-                                            126,
-                                            126,
-                                          ),
-                                          fontSize: 15.0,
+                                          color: Color(0xff0D4715),
+                                          fontSize: 17.0,
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    0,
-                                    0,
-                                    3,
-                                    0,
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      IconButton(
-                                        onPressed: () async {
-                                          Map data = {
-                                            "userId": userId,
-                                            "productId": userCart[index]["_id"],
-                                          };
+                                Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                            0,
+                                            3,
+                                            1,
+                                            0,
+                                          ),
+                                          child: IconButton(
+                                            onPressed: () async {
+                                              Map data = {
+                                                "userId": userId,
+                                                "productId":
+                                                    userCart[index]["_id"],
+                                              };
 
-                                          final success = await context
-                                              .read<CartProvider>()
-                                              .addToCart(data, storage);
-                                          if (success) {
-                                            await context
+                                              bool success = await context
+                                                  .read<CartProvider>()
+                                                  .removeItemCompletely(
+                                                    data,
+                                                    storage,
+                                                  );
+                                              if (success) {
+                                                setState(() {});
+                                              }
+                                            },
+                                            icon: Icon(
+                                              FontAwesomeIcons.xmark,
+                                              color: Colors.grey,
+                                              size: 20,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        IconButton(
+                                          onPressed: () async {
+                                            Map data = {
+                                              "userId": userId,
+                                              "productId":
+                                                  userCart[index]["_id"],
+                                            };
+
+                                            final success = await context
                                                 .read<CartProvider>()
-                                                .getCart(userId);
-                                            setState(() {});
-                                          } else {
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              SnackBar(
-                                                backgroundColor:
-                                                    Colors.red[700],
-                                                content: Text(
-                                                  "Product out of stock",
-                                                  style: TextStyle(
-                                                    fontFamily: "Poppins",
-                                                    fontSize: 15,
-                                                    color: Colors.white,
+                                                .addToCart(data, storage);
+                                            if (success) {
+                                              await context
+                                                  .read<CartProvider>()
+                                                  .getCart(userId);
+                                              setState(() {});
+                                            } else {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  backgroundColor:
+                                                      Colors.red[700],
+                                                  content: Text(
+                                                    "Product out of stock",
+                                                    style: TextStyle(
+                                                      fontFamily: "Poppins",
+                                                      fontSize: 15,
+                                                      color: Colors.white,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            );
-                                          }
-                                        },
-
-                                        icon: Icon(Icons.add, size: 20),
-                                      ),
-                                      Text(
-                                        userCart[index]["quantity"].toString(),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          color: Color.fromARGB(
-                                            255,
-                                            76,
-                                            76,
-                                            76,
+                                              );
+                                            }
+                                          },
+                                          icon: CircleAvatar(
+                                            radius: 15,
+                                            backgroundColor: Color(0xff0D4715),
+                                            child: Icon(
+                                              Icons.add,
+                                              size: 15,
+                                              color: Colors.white,
+                                            ),
                                           ),
-                                          fontSize: 17.0,
-                                          fontFamily: "Poppins",
                                         ),
-                                      ),
-                                      IconButton(
-                                        onPressed: () async {
-                                          Map data = {
-                                            "userId": userId,
-                                            "productId": userCart[index]["_id"],
-                                          };
-                                          final success = await context
-                                              .read<CartProvider>()
-                                              .removeFromCart(data, storage);
-                                          if (success) {
-                                            await context
+                                        Text(
+                                          userCart[index]["quantity"]
+                                              .toString(),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            color: Color.fromARGB(
+                                              255,
+                                              76,
+                                              76,
+                                              76,
+                                            ),
+                                            fontSize: 17.0,
+                                            fontFamily: "Poppins",
+                                          ),
+                                        ),
+                                        IconButton(
+                                          onPressed: () async {
+                                            Map data = {
+                                              "userId": userId,
+                                              "productId":
+                                                  userCart[index]["_id"],
+                                            };
+                                            final success = await context
                                                 .read<CartProvider>()
-                                                .getCart(userId);
-                                            setState(() {});
-                                          }
-                                        },
-                                        icon: Icon(Icons.remove, size: 20),
-                                      ),
-                                    ],
-                                  ),
+                                                .removeFromCart(data, storage);
+                                            if (success) {
+                                              await context
+                                                  .read<CartProvider>()
+                                                  .getCart(userId);
+                                              setState(() {});
+                                            }
+                                          },
+                                          icon: CircleAvatar(
+                                            radius: 15,
+                                            backgroundColor: Color(0xff0D4715),
+                                            child: Icon(
+                                              Icons.remove,
+                                              size: 15,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
