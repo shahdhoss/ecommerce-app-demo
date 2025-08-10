@@ -18,6 +18,7 @@ class _CartWidgetState extends State<CartWidget> {
   List userCart = [];
   String userId = "";
   bool isLoading = true;
+  TextEditingController searchController = TextEditingController();
 
   void initialize() async {
     try {
@@ -55,15 +56,6 @@ class _CartWidgetState extends State<CartWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  backgroundColor: Color(0xffF1F0E9),
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: Icon(Icons.arrow_back, color: Color(0xff0D4715)),
-                  ),
-                ),
                 Text(
                   "Cart",
                   textAlign: TextAlign.center,
@@ -74,14 +66,14 @@ class _CartWidgetState extends State<CartWidget> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                CircleAvatar(
-                  backgroundColor: Color(0xffF1F0E9),
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.shopping_cart, color: Color(0xff0D4715)),
-                  ),
-                ),
               ],
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+              child: CupertinoSearchTextField(
+                controller: searchController,
+                placeholder: 'Search Keywords...',
+              ),
             ),
             Expanded(
               child: isLoading
