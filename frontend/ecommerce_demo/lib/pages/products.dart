@@ -86,7 +86,7 @@ class _ProductsState extends State<Products> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 14, 0, 8.0),
+              padding: const EdgeInsets.fromLTRB(16.0, 14, 0, 5.0),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(

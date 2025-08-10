@@ -1,4 +1,5 @@
 import 'package:ecommerce_demo/models/products_model.dart';
+import 'package:ecommerce_demo/pages/cart.dart';
 import 'package:ecommerce_demo/pages/chat.dart';
 import 'package:ecommerce_demo/pages/details.dart';
 import 'package:ecommerce_demo/pages/main_scaffold.dart';
@@ -47,7 +48,8 @@ class _MyAppState extends State<MyApp> {
           "/signup": (context) => Signup(),
           "/chat": (context) => ChatWidget(),
           "/products": (context) => Products(),
-          "/wishlist": (context)=> Wishlist()
+          "/wishlist": (context)=> Wishlist(),
+          "/cart": (context) => CartWidget()
         },
       ),
     );

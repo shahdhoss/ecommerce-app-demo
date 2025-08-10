@@ -62,37 +62,46 @@ class _MainScaffoldState extends State<MainScaffold> {
     checkTokenExpiry();
     return Scaffold(
       body: !isLoaded ? CupertinoActivityIndicator() : pages[index],
-      bottomNavigationBar: SizedBox(
-        height: 70,
-        child: GNav(
-          iconSize: 20,
-          backgroundColor: Colors.white,
-          selectedIndex: index,
-          color: Colors.grey,
-          tabBackgroundColor: Color(0xFFF7F7F7),
-          activeColor: Colors.black,
-          duration: Duration(milliseconds: 900),
-          haptic: true,
-          gap: 8,
-          onTabChange: (indexInput) {
-            setState(() {
-              index = indexInput;
-            });
-          },
-          tabs: tokenExpired
-              ? [
-                  GButton(icon: Icons.home, text: "Home"),
-                  GButton(icon: Icons.search, text: "Browse"),
-                  GButton(icon: Icons.person_2_rounded, text: "Login"),
-                ]
-              : [
-                  GButton(icon: Icons.home, text: "Home"),
-                  GButton(icon: Icons.search, text: "Browse"),
-                  GButton(icon: Icons.favorite_border, text: "Wishlist"),
-                  GButton(icon: Icons.shopping_cart, text: "Cart"),
-                ],
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(25),
+          child: Material(
+            elevation: 8,
+            shadowColor: Colors.black26,
+            child: GNav(
+              iconSize: 20,
+              backgroundColor: Color(0xffE8F3EC),
+              selectedIndex: index,
+              color: Color(0xff0D4715),
+              tabBackgroundColor: Colors.white70,
+              tabBorderRadius: 20,
+              activeColor: Colors.black,
+              duration: Duration(milliseconds: 900),
+              haptic: true,
+              gap: 8,
+              onTabChange: (indexInput) {
+                setState(() {
+                  index = indexInput;
+                });
+              },
+              tabs: tokenExpired
+                  ? [
+                      GButton(icon: Icons.home, text: "Home"),
+                      GButton(icon: Icons.search, text: "Browse"),
+                      GButton(icon: Icons.person_2_rounded, text: "Login"),
+                    ]
+                  : [
+                      GButton(icon: Icons.home, text: "Home"),
+                      GButton(icon: Icons.search, text: "Browse"),
+                      GButton(icon: Icons.favorite_border, text: "Wishlist"),
+                      GButton(icon: Icons.shopping_cart, text: "Cart"),
+                    ],
+            ),
+          ),
         ),
       ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.pushNamed(context, "/chat");

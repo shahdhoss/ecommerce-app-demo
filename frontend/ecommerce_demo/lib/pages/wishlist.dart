@@ -17,6 +17,7 @@ class _WishlistState extends State<Wishlist> {
   List userFavorites = [];
   String userId = '';
   bool isLoading = false;
+  TextEditingController searchController = TextEditingController();
 
   void initialize() async {
     try {
@@ -50,27 +51,36 @@ class _WishlistState extends State<Wishlist> {
         padding: const EdgeInsets.fromLTRB(15, 40, 15, 20),
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Wishlist",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xff0D4715),
-                    fontFamily: "Poppins",
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.bold,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Wishlist",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xff0D4715),
+                      fontFamily: "Poppins",
+                      fontSize: 30.0,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                CircleAvatar(
-                  backgroundColor: Color(0xffF1F0E9),
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.shopping_cart, color: Color(0xff0D4715)),
+                  CircleAvatar(
+                    backgroundColor: Color(0xffF1F0E9),
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, "/cart");
+                      },
+                      icon: Icon(Icons.shopping_cart, color: Color(0xff0D4715)),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
+            ),
+            CupertinoSearchTextField(
+              controller: searchController,
+              placeholder: 'Search Keywords...',
             ),
             Expanded(
               child: isLoading
@@ -105,8 +115,11 @@ class _WishlistState extends State<Wishlist> {
                                 .removeFromFavorites(data, storage);
                           },
                           child: Container(
-                            decoration: BoxDecoration(color: Color(0xffF5F7F8)),
-                            height: MediaQuery.of(context).size.height * 0.17,
+                            decoration: BoxDecoration(
+                              color: Color(0xffEEF5F0),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            height: MediaQuery.of(context).size.height * 0.2,
                             width: MediaQuery.of(context).size.width * 0.1,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -133,17 +146,61 @@ class _WishlistState extends State<Wishlist> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        userFavorites[index]["title"],
-                                        style: TextStyle(
-                                          fontFamily: "Poppins",
-                                          fontWeight: FontWeight.w700,
-                                          color: Color(0xff0D4715),
-                                          fontSize: 16.0,
-                                        ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            userFavorites[index]["title"],
+                                            style: TextStyle(
+                                              fontFamily: "Poppins",
+                                              fontWeight: FontWeight.w700,
+                                              color: Color(0xff0D4715),
+                                              fontSize: 16.0,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: CircleAvatar(
+                                              radius: 15,
+                                              backgroundColor: Color.fromARGB(
+                                                255,
+                                                215,
+                                                215,
+                                                215,
+                                              ),
+                                              child: IconButton(
+                                                onPressed: () {
+                                                  Map data = {
+                                                    "userId": userId,
+                                                    "productId":
+                                                        userFavorites[index]["_id"],
+                                                  };
+                                                  context
+                                                      .read<WishlistProvider>()
+                                                      .removeFromFavorites(
+                                                        data,
+                                                        storage,
+                                                      );
+                                                },
+                                                icon: Icon(
+                                                  Icons.favorite,
+                                                  color: Color(0xff0D4715),
+                                                  size: 15,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                       Text(
-                                        "1.5 lbs",
+                                        userFavorites[index]["description"]
+                                                    .length <
+                                                80
+                                            ? userFavorites[index]["description"]
+                                            : userFavorites[index]["description"]
+                                                      .substring(0, 80) +
+                                                  "...",
                                         style: TextStyle(
                                           fontFamily: "Poppins",
                                           fontWeight: FontWeight.w500,
@@ -153,6 +210,15 @@ class _WishlistState extends State<Wishlist> {
                                             126,
                                             126,
                                           ),
+                                          fontSize: 12.0,
+                                        ),
+                                      ),
+                                      Text(
+                                        "\$${userFavorites[index]["price"].toString()}",
+                                        style: TextStyle(
+                                          fontFamily: "Poppins",
+                                          fontWeight: FontWeight.w700,
+                                          color: Color(0xff0D4715),
                                           fontSize: 15.0,
                                         ),
                                       ),

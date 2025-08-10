@@ -1,12 +1,9 @@
 import 'package:ecommerce_demo/models/products_model.dart';
-import 'package:ecommerce_demo/pages/details.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import "package:http/http.dart" as http;
-import 'dart:convert';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -39,30 +36,26 @@ class _HomeState extends State<Home> {
     products = context.watch<ProductsModel>().products;
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.fromLTRB(10, 30, 10, 0),
+        padding: EdgeInsets.fromLTRB(10, 15, 10, 0),
         child: Column(
           children: [
-            CupertinoSearchTextField(
-              controller: search,
-              placeholder: 'Search Keywords...',
-            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
               child: Stack(
                 children: [
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.3,
+                    height: MediaQuery.of(context).size.height * 0.32,
                     width: MediaQuery.of(context).size.width * 0.95,
                     child: PageView(
                       controller: pageController,
                       children: [
                         Image(
                           fit: BoxFit.cover,
-                          image: AssetImage("pictures/foodpic1.avif"),
+                          image: AssetImage("pictures/foodpic2.avif"),
                         ),
                         Image(
                           fit: BoxFit.cover,
-                          image: AssetImage("pictures/foodpic2.avif"),
+                          image: AssetImage("pictures/foodpic1.avif"),
                         ),
                         Image(
                           fit: BoxFit.cover,
@@ -81,7 +74,7 @@ class _HomeState extends State<Home> {
                     child: SmoothPageIndicator(
                       controller: pageController,
                       count: 4,
-                      effect: ExpandingDotsEffect(
+                      effect: WormEffect(
                         dotColor: Color(0xffF1F0E9),
                         dotHeight: 8,
                         dotWidth: 8,
@@ -313,16 +306,14 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, "/products");
-                  },
+                  onPressed: () {},
                   icon: Icon(Icons.keyboard_arrow_right_rounded, size: 30),
                 ),
               ],
             ),
             Expanded(
               child: !isLoaded
-                  ? Center(child:  CupertinoActivityIndicator())
+                  ? Center(child: CupertinoActivityIndicator())
                   : ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: 5,
@@ -330,12 +321,12 @@ class _HomeState extends State<Home> {
                         return Padding(
                           padding: EdgeInsets.fromLTRB(0, 0, 16, 8),
                           child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.4,
+                            width: MediaQuery.of(context).size.width * 0.5,
                             height: 60,
                             child: Column(
                               children: [
                                 AspectRatio(
-                                  aspectRatio: 1.47,
+                                  aspectRatio: 1.645,
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.all(
                                       Radius.circular(15),
@@ -346,10 +337,16 @@ class _HomeState extends State<Home> {
                                           context,
                                           '/details',
                                           arguments: {
+                                            "id": products[index]["_id"],
                                             "title": products[index]["title"],
                                             "picture":
                                                 products[index]["picture"],
                                             "price": products[index]["price"],
+                                            "isFavorite":
+                                                products[index]["isFavorite"],
+                                            "description":
+                                                products[index]["description"],
+                                            "rating": products[index]["rating"],
                                           },
                                         );
                                       },

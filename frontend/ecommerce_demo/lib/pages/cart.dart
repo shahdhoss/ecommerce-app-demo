@@ -160,7 +160,8 @@ class _CartWidgetState extends State<CartWidget> {
                           direction: DismissDirection.endToStart,
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Color(0xffF5F7F8),
+                              color: Color(0xffEEF5F0),
+                              borderRadius: BorderRadius.circular(15),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.grey.withOpacity(0.2),
@@ -171,18 +172,17 @@ class _CartWidgetState extends State<CartWidget> {
                               ],
                             ),
 
-                            height: MediaQuery.of(context).size.height * 0.17,
+                            height: MediaQuery.of(context).size.height * 0.18,
                             width: MediaQuery.of(context).size.width * 0.1,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Container(
                                   padding: EdgeInsets.fromLTRB(7, 5, 10, 5),
                                   height:
                                       MediaQuery.of(context).size.height * 0.15,
                                   width:
-                                      MediaQuery.of(context).size.width * 0.27,
+                                      MediaQuery.of(context).size.width * 0.35,
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.all(
                                       Radius.circular(8),
@@ -195,8 +195,7 @@ class _CartWidgetState extends State<CartWidget> {
                                 ),
                                 Expanded(
                                   child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
