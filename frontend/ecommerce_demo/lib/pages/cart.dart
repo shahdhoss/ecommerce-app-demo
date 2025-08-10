@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import "../utils/token.dart";
 
 class CartWidget extends StatefulWidget {
   const CartWidget({super.key});
@@ -18,20 +17,16 @@ class _CartWidgetState extends State<CartWidget> {
   FlutterSecureStorage storage = FlutterSecureStorage();
   List userCart = [];
   String userId = "";
-  bool tokenExpired = false;
   bool isLoading = true;
 
   void initialize() async {
     try {
+      await context.read<UserProvider>().loadUserToken();
       userId = await context.read<UserProvider>().getUserId();
-      tokenExpired = await isTokenExpired(storage);
-      if (!tokenExpired) {
-        userCart = await context.read<CartProvider>().getCart(userId);
-        print(userCart);
-      }
+      userCart = await context.read<CartProvider>().getCart(userId);
+      print(userCart);
     } catch (e) {
       print('Error during initialization: $e');
-      tokenExpired = true;
     } finally {
       if (mounted) {
         setState(() {
@@ -49,9 +44,8 @@ class _CartWidgetState extends State<CartWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (!tokenExpired) {
-      userCart = context.watch<CartProvider>().userCart;
-    }
+    userCart = context.watch<CartProvider>().userCart;
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.fromLTRB(15, 40, 15, 20),
@@ -126,7 +120,9 @@ class _CartWidgetState extends State<CartWidget> {
                           ),
                         ),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(context, "/wishlist");
+                          },
                           child: Text(
                             "Check your wishlist",
                             style: TextStyle(color: Colors.white, fontSize: 15),
@@ -139,15 +135,6 @@ class _CartWidgetState extends State<CartWidget> {
                           ),
                         ),
                       ],
-                    )
-                  : tokenExpired
-                  ? Text(
-                      "Login to start seeing your cart items",
-                      style: TextStyle(
-                        fontFamily: "Poppins",
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                      ),
                     )
                   : ListView.separated(
                       separatorBuilder: (context, index) {

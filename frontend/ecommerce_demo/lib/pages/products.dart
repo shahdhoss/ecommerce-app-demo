@@ -1,6 +1,5 @@
 import 'package:ecommerce_demo/models/user_model.dart';
 import 'package:ecommerce_demo/models/wishlist_model.dart';
-import 'package:ecommerce_demo/utils/token.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import "package:http/http.dart" as http;
@@ -21,7 +20,7 @@ class _ProductsState extends State<Products> {
   String userId = '';
   final storage = FlutterSecureStorage();
   TextEditingController textEditingController = TextEditingController();
-  bool tokenExpired = false;
+  bool tokenExpired = true;
   bool isLoaded = false;
 
   Future fetchProducts() async {
@@ -52,7 +51,9 @@ class _ProductsState extends State<Products> {
 
   void initialize() async {
     try {
+      await context.read<UserProvider>().loadUserToken();
       userId = await context.read<UserProvider>().getUserId();
+      tokenExpired = context.read<UserProvider>().isTokenExpired();
       if (!tokenExpired) {
         userFavorites = await context.read<WishlistProvider>().getUserFavorites(
           userId,
@@ -77,7 +78,7 @@ class _ProductsState extends State<Products> {
   }
 
   Widget build(BuildContext context) {
-    if (tokenExpired) {
+    if (!tokenExpired) {
       userFavorites = context.watch<WishlistProvider>().userFavorites;
     }
     return Scaffold(
@@ -200,7 +201,7 @@ class _ProductsState extends State<Products> {
                                       ),
                                       child: IconButton(
                                         onPressed: () {
-                                          if (tokenExpired) {
+                                          if (!tokenExpired) {
                                             Map data = {
                                               "userId": userId,
                                               "productId":

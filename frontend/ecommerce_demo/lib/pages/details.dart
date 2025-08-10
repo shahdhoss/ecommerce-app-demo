@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:ecommerce_demo/models/cart_model.dart';
 import 'package:ecommerce_demo/models/user_model.dart';
-import 'package:ecommerce_demo/utils/token.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -16,20 +15,20 @@ class ProductDetails extends StatefulWidget {
 }
 
 class _ProductDetailsState extends State<ProductDetails> {
-  FlutterSecureStorage storage = FlutterSecureStorage();
   Map productData = {};
   late String userId;
   List userFavorites = [];
   List userCart = [];
   Map userCartProduct = {};
   int quantity = 0;
-  bool tokenExpired = true;
+  bool tokenExpired = false;
   bool isLoading = true;
 
   void initialize() async {
     try {
+      await context.read<UserProvider>().loadUserToken();
       userId = await context.read<UserProvider>().getUserId();
-      tokenExpired = await isTokenExpired(storage);
+      tokenExpired =  context.read<UserProvider>().isTokenExpired();
       if (!tokenExpired) {
         userFavorites = await context.read<WishlistProvider>().getUserFavorites(
           userId,
@@ -159,12 +158,12 @@ class _ProductDetailsState extends State<ProductDetails> {
                         if (isFav) {
                           context.read<WishlistProvider>().removeFromFavorites(
                             data,
-                            storage,
+                            context.read<UserProvider>().storage,
                           );
                         } else {
                           context.read<WishlistProvider>().addToFavorites(
                             data,
-                            storage,
+                        context.read<UserProvider>().storage,
                           );
                         }
                         setState(() {
@@ -225,7 +224,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               };
                               context.read<CartProvider>().removeFromCart(
                                 data,
-                                storage,
+                            context.read<UserProvider>().storage,
                               );
                               setState(() {});
                             } else {
@@ -267,7 +266,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               };
                               final success = await context
                                   .read<CartProvider>()
-                                  .addToCart(data, storage);
+                                  .addToCart(data,context.read<UserProvider>().storage);
                               if (success) {
                                 await context.read<CartProvider>().getCart(
                                   userId,

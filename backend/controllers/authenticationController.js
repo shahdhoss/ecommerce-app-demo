@@ -9,7 +9,7 @@ exports.registerUser = async (req,res)=>{
         const user = new User({name, email, password: hashedPassword})
         await user.save()
         const token = jwt.sign({userId:user._id}, "shahdDetectiveConan", {
-            expiresIn: "1d"
+            expiresIn: "30m"
         })
         return res.status(200).json({token})
     }catch (err){
@@ -30,7 +30,7 @@ exports.loginUser = async (req,res)=>{
             return res.status(401).json({error :"Password is incorrect"})
         }
         const token = jwt.sign({userId:user._id}, "shahdDetectiveConan", {
-            expiresIn: "1d"
+            expiresIn: "30m"
         })
         return res.status(200).json({token})
     }catch(err){

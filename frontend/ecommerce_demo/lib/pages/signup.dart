@@ -1,9 +1,11 @@
 import "dart:convert";
 
+import "package:ecommerce_demo/models/user_model.dart";
 import 'package:flutter/material.dart';
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
 import "package:http/http.dart" as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import "package:provider/provider.dart";
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -17,7 +19,6 @@ class _SignupState extends State<Signup> {
   TextEditingController name = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
-  final storage = FlutterSecureStorage();
   bool isPasswordVisible = true;
 
   void toggleVisibility() {
@@ -34,7 +35,9 @@ class _SignupState extends State<Signup> {
     );
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
-      await storage.write(key: 'token', value: responseBody["token"]);
+      FlutterSecureStorage userStorage = FlutterSecureStorage();
+      await userStorage.write(key: "token", value: responseBody["token"]);
+      context.read<UserProvider>().setStorage(userStorage);
       print("signed in successfully");
       Navigator.pushNamed(context, "/");
     } else {

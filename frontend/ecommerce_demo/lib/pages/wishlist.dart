@@ -16,20 +16,17 @@ class _WishlistState extends State<Wishlist> {
   final storage = FlutterSecureStorage();
   List userFavorites = [];
   String userId = '';
-  bool tokenExpired = false;
-  bool isLoading = true;
+  bool isLoading = false;
 
   void initialize() async {
     try {
+      await context.read<UserProvider>().loadUserToken();
       userId = await context.read<UserProvider>().getUserId();
-      if (!tokenExpired) {
-        userFavorites = await context.read<WishlistProvider>().getUserFavorites(
-          userId,
-        );
-      }
+      userFavorites = await context.read<WishlistProvider>().getUserFavorites(
+        userId,
+      );
     } catch (e) {
       print('Error during initialization: $e');
-      tokenExpired = true;
     } finally {
       if (mounted) {
         setState(() {
@@ -47,9 +44,7 @@ class _WishlistState extends State<Wishlist> {
 
   @override
   Widget build(BuildContext context) {
-    if (!tokenExpired) {
-      userFavorites = context.watch<WishlistProvider>().userFavorites;
-    }
+    userFavorites = context.watch<WishlistProvider>().userFavorites;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.fromLTRB(15, 40, 15, 20),
@@ -80,17 +75,6 @@ class _WishlistState extends State<Wishlist> {
             Expanded(
               child: isLoading
                   ? Center(child: CupertinoActivityIndicator())
-                  : tokenExpired
-                  ? Center(
-                      child: Text(
-                        "Login to start seeing your favorited items",
-                        style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    )
                   : userFavorites.isEmpty
                   ? Center(
                       child: Text(

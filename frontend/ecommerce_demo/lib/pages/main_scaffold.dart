@@ -1,3 +1,4 @@
+import 'package:ecommerce_demo/models/user_model.dart';
 import 'package:ecommerce_demo/pages/cart.dart';
 import 'package:ecommerce_demo/pages/home.dart';
 import 'package:ecommerce_demo/pages/login.dart';
@@ -8,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import '../utils/token.dart';
+import 'package:provider/provider.dart';
 
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
@@ -18,7 +19,7 @@ class MainScaffold extends StatefulWidget {
 }
 
 class _MainScaffoldState extends State<MainScaffold> {
-  final storage = FlutterSecureStorage();
+  FlutterSecureStorage storage = FlutterSecureStorage();
   bool tokenExpiryState = true;
   List pages = [];
   int index = 0;
@@ -32,7 +33,8 @@ class _MainScaffoldState extends State<MainScaffold> {
 
   void checkTokenExpiry() async {
     try {
-      tokenExpiryState = await isTokenExpired(storage);
+      await context.read<UserProvider>().loadUserToken();
+      tokenExpiryState = context.read<UserProvider>().isTokenExpired();
       setState(() {
         if (tokenExpiryState) {
           pages = [Home(), Products(), Login()];
@@ -56,6 +58,7 @@ class _MainScaffoldState extends State<MainScaffold> {
   }
 
   Widget build(BuildContext context) {
+    tokenExpiryState = context.watch<UserProvider>().isTokenExpired();
     return Scaffold(
       body: !isLoaded ? CupertinoActivityIndicator() : pages[index],
       bottomNavigationBar: SizedBox(

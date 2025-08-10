@@ -4,9 +4,9 @@ import "package:jwt_decoder/jwt_decoder.dart";
 
 class UserProvider extends ChangeNotifier {
   FlutterSecureStorage storage = FlutterSecureStorage();
+  String token = "";
 
-  Future getUserId() async {
-    String? token = await storage.read(key: "token");
+  getUserId() {
     if (token == null || token.isEmpty) {
       return;
     }
@@ -18,5 +18,28 @@ class UserProvider extends ChangeNotifier {
     } catch (err) {
       print(err);
     }
+  }
+
+  bool isTokenExpired() {
+    if (token == null || token.isEmpty) {
+      return true;
+    }
+    try {
+      Map decodedToken = JwtDecoder.decode(token);
+      DateTime expirationDate = JwtDecoder.getExpirationDate(token);
+      return expirationDate.isBefore(DateTime.now());
+    } catch (err) {
+      print(err);
+      return true;
+    }
+  }
+
+  Future<void> loadUserToken() async {
+    token = await storage.read(key: "token") ?? "";
+    notifyListeners();
+  }
+
+  void setStorage(FlutterSecureStorage userStorage) {
+    storage = userStorage;
   }
 }

@@ -8,6 +8,7 @@ import 'package:ecommerce_demo/models/user_model.dart';
 import 'package:ecommerce_demo/models/wishlist_model.dart';
 import 'package:ecommerce_demo/pages/signup.dart';
 import 'package:ecommerce_demo/pages/login.dart';
+import 'package:ecommerce_demo/pages/wishlist.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -45,6 +47,7 @@ class _MyAppState extends State<MyApp> {
           "/signup": (context) => Signup(),
           "/chat": (context) => ChatWidget(),
           "/products": (context) => Products(),
+          "/wishlist": (context)=> Wishlist()
         },
       ),
     );
