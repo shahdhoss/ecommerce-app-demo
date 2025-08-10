@@ -20,7 +20,7 @@ class MainScaffold extends StatefulWidget {
 
 class _MainScaffoldState extends State<MainScaffold> {
   FlutterSecureStorage storage = FlutterSecureStorage();
-  bool tokenExpiryState = true;
+  bool tokenExpired = true;
   List pages = [];
   int index = 0;
   bool isLoaded = false;
@@ -34,9 +34,9 @@ class _MainScaffoldState extends State<MainScaffold> {
   void checkTokenExpiry() async {
     try {
       await context.read<UserProvider>().loadUserToken();
-      tokenExpiryState = context.read<UserProvider>().isTokenExpired();
+      tokenExpired = context.read<UserProvider>().isTokenExpired();
       setState(() {
-        if (tokenExpiryState) {
+        if (tokenExpired) {
           pages = [Home(), Products(), Login()];
         } else {
           pages = [Home(), Products(), Wishlist(), CartWidget()];
@@ -58,7 +58,8 @@ class _MainScaffoldState extends State<MainScaffold> {
   }
 
   Widget build(BuildContext context) {
-    tokenExpiryState = context.watch<UserProvider>().isTokenExpired();
+    tokenExpired = context.watch<UserProvider>().isTokenExpired();
+    checkTokenExpiry();
     return Scaffold(
       body: !isLoaded ? CupertinoActivityIndicator() : pages[index],
       bottomNavigationBar: SizedBox(
@@ -78,7 +79,7 @@ class _MainScaffoldState extends State<MainScaffold> {
               index = indexInput;
             });
           },
-          tabs: tokenExpiryState
+          tabs: tokenExpired
               ? [
                   GButton(icon: Icons.home, text: "Home"),
                   GButton(icon: Icons.search, text: "Browse"),
