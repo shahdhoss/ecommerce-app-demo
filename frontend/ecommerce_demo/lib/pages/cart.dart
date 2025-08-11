@@ -81,23 +81,40 @@ class _CartWidgetState extends State<CartWidget> {
                   ? Center(child: CupertinoActivityIndicator())
                   : userCart.isEmpty
                   ? Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.network(
-                          "https://i.pinimg.com/736x/8d/49/0d/8d490d9ad19b49090945acd7cf7895d9.jpg",
-                          height: MediaQuery.of(context).size.height * 0.5,
-                          width: MediaQuery.of(context).size.width * 0.9,
+                          "https://i.pinimg.com/originals/14/d5/06/14d5066da138b0f91f082f2ae60d6169.gif",
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress != null) {
+                              return SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.4,
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                child: Center(
+                                  child: CupertinoActivityIndicator(),
+                                ),
+                              );
+                            } else {
+                              return SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.4,
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                child: child,
+                              );
+                            }
+                          },
                         ),
                         Text(
                           "Empty basket",
                           style: TextStyle(
                             fontFamily: "Poppins",
-                            fontSize: 28,
+                            fontSize: 25,
                             fontWeight: FontWeight.bold,
                             color: Color(0xff0D4715),
                           ),
                         ),
-
+                        SizedBox(height: 10),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
                           child: Center(
@@ -112,6 +129,7 @@ class _CartWidgetState extends State<CartWidget> {
                             ),
                           ),
                         ),
+                        SizedBox(height: 10),
                         ElevatedButton(
                           onPressed: () {
                             Navigator.pushNamed(context, "/wishlist");

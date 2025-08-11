@@ -88,13 +88,53 @@ class _WishlistState extends State<Wishlist> {
                   ? Center(child: CupertinoActivityIndicator())
                   : userFavorites.isEmpty
                   ? Center(
-                      child: Text(
-                        "Start saving your favorite items",
-                        style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                        ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.network(
+                            "https://i.pinimg.com/originals/93/27/bd/9327bd9925f915058e47eab094425eb4.gif",
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress != null) {
+                                return SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.5,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.9,
+                                  child: Center(
+                                    child: CupertinoActivityIndicator(),
+                                  ),
+                                );
+                              } else {
+                                return SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.5,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.9,
+                                  child: child,
+                                );
+                              }
+                            },
+                          ),
+                          Text(
+                            "Empty wishlist",
+                            style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xff0D4715),
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Start saving your favorite items \n to view them here",
+                            style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xff0D4715),
+                            ),
+                          ),
+                        ],
                       ),
                     )
                   : ListView.separated(
