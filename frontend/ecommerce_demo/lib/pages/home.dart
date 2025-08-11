@@ -52,18 +52,54 @@ class _HomeState extends State<Home> {
                         Image(
                           fit: BoxFit.cover,
                           image: AssetImage("pictures/foodpic2.avif"),
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress != null) {
+                              return Center(
+                                child: CupertinoActivityIndicator(),
+                              );
+                            } else {
+                              return child;
+                            }
+                          },
                         ),
                         Image(
                           fit: BoxFit.cover,
                           image: AssetImage("pictures/foodpic1.avif"),
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress != null) {
+                              return Center(
+                                child: CupertinoActivityIndicator(),
+                              );
+                            } else {
+                              return child;
+                            }
+                          },
                         ),
                         Image(
                           fit: BoxFit.cover,
                           image: AssetImage("pictures/foodpic3.avif"),
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress != null) {
+                              return Center(
+                                child: CupertinoActivityIndicator(),
+                              );
+                            } else {
+                              return child;
+                            }
+                          },
                         ),
                         Image(
                           fit: BoxFit.cover,
                           image: AssetImage("pictures/foodpic4.avif"),
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress != null) {
+                              return Center(
+                                child: CupertinoActivityIndicator(),
+                              );
+                            } else {
+                              return child;
+                            }
+                          },
                         ),
                       ],
                     ),
@@ -353,23 +389,15 @@ class _HomeState extends State<Home> {
                                       child: Image.network(
                                         products[index]["picture"],
                                         fit: BoxFit.cover,
-                                        loadingBuilder: (context, child, loadingProgress) {
-                                          if (loadingProgress == null)
-                                            return child;
-                                          return Center(
-                                            child: CircularProgressIndicator(
-                                              value:
-                                                  loadingProgress
-                                                          .expectedTotalBytes !=
-                                                      null
-                                                  ? loadingProgress
-                                                            .cumulativeBytesLoaded /
-                                                        loadingProgress
-                                                            .expectedTotalBytes!
-                                                  : null,
-                                            ),
-                                          );
-                                        },
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
+                                              if (loadingProgress == null)
+                                                return child;
+                                              return Center(
+                                                child:
+                                                    CupertinoActivityIndicator(),
+                                              );
+                                            },
                                       ),
                                     ),
                                   ),
