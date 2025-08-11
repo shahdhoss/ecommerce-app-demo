@@ -63,7 +63,7 @@ class _MainScaffoldState extends State<MainScaffold> {
     return Scaffold(
       body: !isLoaded ? CupertinoActivityIndicator() : pages[index],
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(25),
           child: Material(

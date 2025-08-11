@@ -26,6 +26,7 @@ class _WishlistState extends State<Wishlist> {
       userFavorites = await context.read<WishlistProvider>().getUserFavorites(
         userId,
       );
+      setState(() {});
     } catch (e) {
       print('Error during initialization: $e');
     } finally {
@@ -102,131 +103,117 @@ class _WishlistState extends State<Wishlist> {
                       },
                       itemCount: userFavorites.length,
                       itemBuilder: (context, index) {
-                        return Dismissible(
-                          key: UniqueKey(),
-                          direction: DismissDirection.endToStart,
-                          onDismissed: (direction) {
-                            Map data = {
-                              "userId": userId,
-                              "productId": userFavorites[index]["_id"],
-                            };
-                            context
-                                .read<WishlistProvider>()
-                                .removeFromFavorites(data, storage);
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Color(0xffEEF5F0),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            height: MediaQuery.of(context).size.height * 0.2,
-                            width: MediaQuery.of(context).size.width * 0.1,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.fromLTRB(7, 5, 10, 5),
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.15,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.27,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(8),
-                                    ),
-                                    child: Image.network(
-                                      userFavorites[index]["picture"],
-                                      fit: BoxFit.cover,
-                                    ),
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xffEEF5F0),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          height: MediaQuery.of(context).size.height * 0.2,
+                          width: MediaQuery.of(context).size.width * 0.1,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.fromLTRB(7, 5, 10, 5),
+                                height:
+                                    MediaQuery.of(context).size.height * 0.15,
+                                width: MediaQuery.of(context).size.width * 0.27,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(8),
+                                  ),
+                                  child: Image.network(
+                                    userFavorites[index]["picture"],
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            userFavorites[index]["title"],
-                                            style: TextStyle(
-                                              fontFamily: "Poppins",
-                                              fontWeight: FontWeight.w700,
-                                              color: Color(0xff0D4715),
-                                              fontSize: 16.0,
-                                            ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          userFavorites[index]["title"],
+                                          style: TextStyle(
+                                            fontFamily: "Poppins",
+                                            fontWeight: FontWeight.w700,
+                                            color: Color(0xff0D4715),
+                                            fontSize: 16.0,
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: CircleAvatar(
-                                              radius: 15,
-                                              backgroundColor: Color.fromARGB(
-                                                255,
-                                                215,
-                                                215,
-                                                215,
-                                              ),
-                                              child: IconButton(
-                                                onPressed: () {
-                                                  Map data = {
-                                                    "userId": userId,
-                                                    "productId":
-                                                        userFavorites[index]["_id"],
-                                                  };
-                                                  context
-                                                      .read<WishlistProvider>()
-                                                      .removeFromFavorites(
-                                                        data,
-                                                        storage,
-                                                      );
-                                                },
-                                                icon: Icon(
-                                                  Icons.favorite,
-                                                  color: Color(0xff0D4715),
-                                                  size: 15,
-                                                ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: CircleAvatar(
+                                            radius: 15,
+                                            backgroundColor: Color.fromARGB(
+                                              255,
+                                              215,
+                                              215,
+                                              215,
+                                            ),
+                                            child: IconButton(
+                                              onPressed: () {
+                                                Map data = {
+                                                  "userId": userId,
+                                                  "productId":
+                                                      userFavorites[index]["_id"],
+                                                };
+                                                context
+                                                    .read<WishlistProvider>()
+                                                    .removeFromFavorites(
+                                                      data,
+                                                      storage,
+                                                    );
+                                                setState(() {});
+                                              },
+                                              icon: Icon(
+                                                Icons.favorite,
+                                                color: Color(0xff0D4715),
+                                                size: 15,
                                               ),
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                      Text(
-                                        userFavorites[index]["description"]
-                                                    .length <
-                                                80
-                                            ? userFavorites[index]["description"]
-                                            : userFavorites[index]["description"]
-                                                      .substring(0, 80) +
-                                                  "...",
-                                        style: TextStyle(
-                                          fontFamily: "Poppins",
-                                          fontWeight: FontWeight.w500,
-                                          color: Color.fromARGB(
-                                            255,
-                                            126,
-                                            126,
-                                            126,
-                                          ),
-                                          fontSize: 12.0,
                                         ),
-                                      ),
-                                      Text(
-                                        "\$${userFavorites[index]["price"].toString()}",
-                                        style: TextStyle(
-                                          fontFamily: "Poppins",
-                                          fontWeight: FontWeight.w700,
-                                          color: Color(0xff0D4715),
-                                          fontSize: 15.0,
+                                      ],
+                                    ),
+                                    Text(
+                                      userFavorites[index]["description"]
+                                                  .length <
+                                              80
+                                          ? userFavorites[index]["description"]
+                                          : userFavorites[index]["description"]
+                                                    .substring(0, 80) +
+                                                "...",
+                                      style: TextStyle(
+                                        fontFamily: "Poppins",
+                                        fontWeight: FontWeight.w500,
+                                        color: Color.fromARGB(
+                                          255,
+                                          126,
+                                          126,
+                                          126,
                                         ),
+                                        fontSize: 12.0,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                    Text(
+                                      "\$${userFavorites[index]["price"].toString()}",
+                                      style: TextStyle(
+                                        fontFamily: "Poppins",
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xff0D4715),
+                                        fontSize: 15.0,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         );
                       },

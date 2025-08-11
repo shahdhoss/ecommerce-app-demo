@@ -200,7 +200,7 @@ class _ProductsState extends State<Products> {
                                         215,
                                       ),
                                       child: IconButton(
-                                        onPressed: () {
+                                        onPressed: ()  {
                                           if (!tokenExpired) {
                                             Map data = {
                                               "userId": userId,
@@ -211,7 +211,7 @@ class _ProductsState extends State<Products> {
                                               products[index]["_id"],
                                             );
                                             if (isFav) {
-                                              context
+                                                context
                                                   .read<WishlistProvider>()
                                                   .removeFromFavorites(
                                                     data,
