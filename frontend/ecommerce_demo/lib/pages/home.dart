@@ -1,4 +1,5 @@
 import 'package:ecommerce_demo/models/products_model.dart';
+import 'package:ecommerce_demo/reusable_widgets/catergory_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -142,182 +143,56 @@ class _HomeState extends State<Home> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  Column(
-                    children: [
-                      CircleAvatar(
-                        radius: 25,
-                        backgroundColor: Color(0xffF1F0E9),
-                        child: IconButton(
-                          alignment: Alignment.center,
-                          iconSize: 28,
-                          onPressed: () {},
-                          icon: Icon(
-                            FontAwesomeIcons.leaf,
-                            color: Colors.green,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        "Vegetables",
-                        style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontSize: 10.0,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xff6B8A88),
-                        ),
-                      ),
-                    ],
+                  CatergoryIcons(
+                    iconCategoryText: "Vegetables",
+                    iconColor: Colors.green,
+                    backgroundColor: Color(0xffF1F0E9),
+                    icon: FontAwesomeIcons.leaf,
                   ),
 
                   Padding(
                     padding: EdgeInsets.fromLTRB(26, 0, 0, 0),
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 25,
-                          backgroundColor: Color.fromARGB(255, 255, 227, 214),
-                          child: IconButton(
-                            alignment: Alignment.center,
-                            iconSize: 28,
-                            onPressed: () {},
-                            icon: Icon(
-                              FontAwesomeIcons.appleWhole,
-                              color: Colors.redAccent,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          "Fruits",
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                            fontSize: 10.0,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff6B8A88),
-                          ),
-                        ),
-                      ],
+                    child: CatergoryIcons(
+                      iconCategoryText: "Fruits",
+                      iconColor: Colors.redAccent,
+                      backgroundColor: Color.fromARGB(255, 255, 227, 214),
+                      icon: FontAwesomeIcons.appleWhole,
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(26, 0, 0, 0),
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 25,
-                          backgroundColor: Color.fromARGB(255, 255, 238, 193),
-                          child: IconButton(
-                            alignment: Alignment.center,
-                            iconSize: 28,
-                            onPressed: () {},
-                            icon: Icon(
-                              FontAwesomeIcons.mugHot,
-                              color: Colors.orangeAccent,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          "Beverages",
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                            fontSize: 10.0,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff6B8A88),
-                          ),
-                        ),
-                      ],
+                    child: CatergoryIcons(
+                      iconCategoryText: "Beverages",
+                      iconColor: Colors.orangeAccent,
+                      backgroundColor: Color.fromARGB(255, 255, 238, 193),
+                      icon: FontAwesomeIcons.mugHot,
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(26, 0, 0, 0),
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 25,
-                          backgroundColor: Color.fromARGB(255, 250, 208, 255),
-                          child: IconButton(
-                            alignment: Alignment.center,
-                            iconSize: 28,
-                            onPressed: () {},
-                            icon: Icon(
-                              FontAwesomeIcons.breadSlice,
-                              color: const Color.fromARGB(255, 218, 98, 239),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          "Grocery",
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                            fontSize: 10.0,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff6B8A88),
-                          ),
-                        ),
-                      ],
+                    child: CatergoryIcons(
+                      iconCategoryText: "Grocery",
+                      iconColor: const Color.fromARGB(255, 218, 98, 239),
+                      backgroundColor: Color.fromARGB(255, 250, 208, 255),
+                      icon: FontAwesomeIcons.breadSlice,
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(26, 0, 0, 0),
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 25,
-                          backgroundColor: Color.fromARGB(255, 255, 219, 234),
-                          child: IconButton(
-                            alignment: Alignment.center,
-                            iconSize: 28,
-                            onPressed: () {},
-                            icon: Icon(
-                              FontAwesomeIcons.bath,
-                              color: const Color.fromARGB(255, 245, 146, 179),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          "Household",
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                            fontSize: 10.0,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff6B8A88),
-                          ),
-                        ),
-                      ],
+                    child: CatergoryIcons(
+                      iconCategoryText: "Household",
+                      iconColor: const Color.fromARGB(255, 245, 146, 179),
+                      backgroundColor: Color.fromARGB(255, 255, 219, 234),
+                      icon: FontAwesomeIcons.breadSlice,
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(26, 0, 0, 0),
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 25,
-                          backgroundColor: Color.fromARGB(255, 201, 255, 254),
-                          child: IconButton(
-                            alignment: Alignment.center,
-                            iconSize: 28,
-                            onPressed: () {},
-                            icon: Icon(
-                              FontAwesomeIcons.babyCarriage,
-                              color: Colors.lightBlue,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          "Babycare",
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                            fontSize: 10.0,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff6B8A88),
-                          ),
-                        ),
-                      ],
+                    child: CatergoryIcons(
+                      iconCategoryText: "Babycare",
+                      iconColor: Colors.lightBlue,
+                      backgroundColor: Color.fromARGB(255, 201, 255, 254),
+                      icon: FontAwesomeIcons.babyCarriage,
                     ),
                   ),
                 ],

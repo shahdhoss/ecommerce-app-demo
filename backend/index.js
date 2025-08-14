@@ -3,6 +3,7 @@ const app = express()
 const {connectMongoDB} = require("./db-connection/mongoose")
 const {verifyToken} = require("./middleware/authMiddleware")
 require("dotenv").config()
+
 const userRouter = require("./routers/usersRouter")
 const favoriteRouter = require("./routers/favoritesRouter")
 const cartRouter = require("./routers/cartRouter")
