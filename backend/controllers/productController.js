@@ -26,3 +26,17 @@ exports.editProductStock = async(req,res)=>{
         return res.status(500).json({error: "Failed to edit product"})
     }
 }
+exports.getProductByType = async(req,res)=>{
+    try{
+        const {type} = req.params
+        const products = await Product.find({type: type})
+        if(products){
+            return res.status(200).json({products})
+        }
+    return res.status(500).json({message: "Product type not found"})
+
+    }catch(err){
+        console.log("An error occurred: ", err)
+    return res.status(500).json({message: "Something went wrong"})
+    }
+}

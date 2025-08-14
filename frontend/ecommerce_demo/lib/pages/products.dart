@@ -82,7 +82,7 @@ class _ProductsState extends State<Products> {
     if (!tokenExpired) {
       userFavorites = context.watch<WishlistProvider>().userFavorites;
     }
-    return ProductWidget(
+    return ProductPageWidget(
       products: products,
       storage: storage,
       userId: userId,

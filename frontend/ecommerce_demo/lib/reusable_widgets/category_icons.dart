@@ -1,17 +1,21 @@
+import 'package:ecommerce_demo/pages/details.dart';
+import 'package:ecommerce_demo/reusable_widgets/product_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class CatergoryIcons extends StatelessWidget {
+class CategoryIcons extends StatelessWidget {
   final String iconCategoryText;
   final Color iconColor;
   final Color backgroundColor;
   final IconData icon;
-  const CatergoryIcons({
+  final VoidCallback onPressed;
+  const CategoryIcons({
     super.key,
     required this.iconCategoryText,
     required this.iconColor,
     required this.backgroundColor,
-    required this.icon
+    required this.icon,
+    required this.onPressed
   });
 
   @override
@@ -24,7 +28,7 @@ class CatergoryIcons extends StatelessWidget {
           child: IconButton(
             alignment: Alignment.center,
             iconSize: 28,
-            onPressed: () {},
+            onPressed: onPressed,
             icon: Icon(icon, color: iconColor),
           ),
         ),

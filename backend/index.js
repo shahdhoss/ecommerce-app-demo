@@ -12,7 +12,7 @@ const productRouter = require("./routers/productRouter")
 app.use(express.json())
 app.use("/", userRouter)
 app.use("/favorites", verifyToken ,favoriteRouter)
-app.use("/cart", verifyToken, cartRouter )
+app.use("/cart", verifyToken, cartRouter)
 app.use("/products", productRouter)
 connectMongoDB()
 

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 
-class ProductWidget extends StatefulWidget {
+class ProductPageWidget extends StatefulWidget {
   final List products;
   final FlutterSecureStorage storage;
   final String userId;
@@ -12,7 +12,7 @@ class ProductWidget extends StatefulWidget {
   final bool isLoaded;
   final bool tokenExpired;
 
-  ProductWidget({
+  ProductPageWidget({
     super.key,
     required this.products,
     required this.storage,
@@ -23,10 +23,10 @@ class ProductWidget extends StatefulWidget {
   });
 
   @override
-  State<ProductWidget> createState() => _ProductWidgetState();
+  State<ProductPageWidget> createState() => _ProductPageWidgetState();
 }
 
-class _ProductWidgetState extends State<ProductWidget> {
+class _ProductPageWidgetState extends State<ProductPageWidget> {
   TextEditingController textEditingController = TextEditingController();
 
   bool isProductInFavorites(String productId) {
