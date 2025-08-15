@@ -19,7 +19,7 @@ class ProductPageWidget extends StatefulWidget {
     required this.userId,
     required this.userFavorites,
     required this.isLoaded,
-    required this.tokenExpired
+    required this.tokenExpired,
   });
 
   @override
@@ -225,9 +225,9 @@ class _ProductPageWidgetState extends State<ProductPageWidget> {
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    widget.products[index]["title"].length > 15
+                                    widget.products[index]["title"].length > 13
                                         ? widget.products[index]["title"]
-                                                  .substring(0, 15) +
+                                                  .substring(0, 13) +
                                               "..."
                                         : widget.products[index]["title"],
                                     textAlign: TextAlign.left,
