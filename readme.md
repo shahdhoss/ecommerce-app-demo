@@ -6,7 +6,7 @@ This project is a grocery shopping app built using Flutter and NodeJS
 
 ## App Demo
 <p align="center">
-  <img src="video-demo/demo_app.gif" width="500" height="600" alt="Demo GIF" />
+  <img src="video-demo/demo_app.gif" width="500" height="800" alt="Demo GIF" />
 </p>
 
 ---
@@ -24,19 +24,19 @@ Clone the project
 Go to the project directory
 
 ```bash
-  cd backend
+cd backend
 ```
 
 Install dependencies
 
 ```bash
-  npm install
+npm install
 ```
 
 Start the server
 
 ```bash
-    node index.js
+node index.js
 ```
 
 # Running The Flutter App
