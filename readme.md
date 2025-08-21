@@ -6,7 +6,7 @@ This project is a grocery shopping app built using Flutter and NodeJS
 
 ## App Demo
 <p align="center">
-  <img src="video-demo/demo_app.gif" width="500" height="800" alt="Demo GIF" />
+  <img src="video-demo/demo_app.gif" width="400" height="900" alt="Demo GIF" />
 </p>
 
 ---
