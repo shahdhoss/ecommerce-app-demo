@@ -46,6 +46,7 @@ dependencies:
   jwt_decoder: ^2.0.1
   provider: ^6.1.5
   persistent_bottom_nav_bar: ^6.2.1
+  slide_to_act: any
   
 
 dev_dependencies:

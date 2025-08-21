@@ -7,6 +7,7 @@ import "package:http/http.dart" as http;
 class CartProvider extends ChangeNotifier {
   List userCart = [];
   FlutterSecureStorage storage = FlutterSecureStorage();
+  double userCartTotal = 0.00;
 
   Future getCart(String userId) async {
     String? token = await storage.read(key: 'token');
@@ -76,6 +77,23 @@ class CartProvider extends ChangeNotifier {
     } else {
       print("Issues with adding to cart");
       return false;
+    }
+  }
+
+  Future getUserTotal(String userId, FlutterSecureStorage storage) async {
+    String? token = await storage.read(key: 'token');
+    final response = await http.get(
+      Uri.parse("http://10.0.2.2:8000/cart/get_cart_total/${userId}"),
+      headers: {"Content-Type": "application/json", "Authorization": "$token"},
+    );
+    if (response.statusCode == 200) {
+      final decoded = jsonDecode(response.body);
+      userCartTotal = decoded["cartTotal"];
+      notifyListeners();
+      print("Cart total is ${userCartTotal}");
+      return userCartTotal;
+    } else {
+      print("Issues with getting cart total");
     }
   }
 }

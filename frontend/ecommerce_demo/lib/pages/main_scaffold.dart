@@ -63,11 +63,11 @@ class _MainScaffoldState extends State<MainScaffold> {
     return Scaffold(
       body: !isLoaded ? CupertinoActivityIndicator() : pages[index],
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(25),
           child: Material(
-            elevation: 8,
+            elevation: 10,
             shadowColor: Colors.black26,
             child: GNav(
               iconSize: 20,
@@ -87,28 +87,20 @@ class _MainScaffoldState extends State<MainScaffold> {
               },
               tabs: tokenExpired
                   ? [
-                      GButton(icon: Icons.home, text: "Home"),
-                      GButton(icon: Icons.search, text: "Browse"),
-                      GButton(icon: Icons.person_2_rounded, text: "Login"),
+                      GButton(icon: Icons.home),
+                      GButton(icon: Icons.search),
+                      GButton(icon: Icons.person_2_rounded),
                     ]
                   : [
-                      GButton(icon: Icons.home, text: "Home"),
-                      GButton(icon: Icons.search, text: "Browse"),
-                      GButton(icon: Icons.favorite_border, text: "Wishlist"),
-                      GButton(icon: Icons.shopping_cart, text: "Cart"),
+                      GButton(icon: Icons.home),
+                      GButton(icon: Icons.search),
+                      GButton(icon: Icons.favorite_border),
+                      GButton(icon: Icons.shopping_cart),
                     ],
             ),
           ),
         ),
       ),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, "/chat");
-        },
-        child: Icon(FontAwesomeIcons.message, color: Color(0xff0D4715)),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

@@ -29,7 +29,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -48,8 +47,8 @@ class _MyAppState extends State<MyApp> {
           "/signup": (context) => Signup(),
           "/chat": (context) => ChatWidget(),
           "/products": (context) => Products(),
-          "/wishlist": (context)=> Wishlist(),
-          "/cart": (context) => CartWidget()
+          "/wishlist": (context) => Wishlist(),
+          "/cart": (context) => CartWidget(),
         },
       ),
     );
