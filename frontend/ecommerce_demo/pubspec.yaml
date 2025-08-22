@@ -47,6 +47,7 @@ dependencies:
   provider: ^6.1.5
   persistent_bottom_nav_bar: ^6.2.1
   slide_to_act: any
+  flutter_dotenv: ^6.0.0
   
 
 dev_dependencies:

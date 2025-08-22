@@ -18,7 +18,7 @@ This project is a grocery shopping app built using Flutter and NodeJS
 Clone the project
 
 ```bash
-  git clone https://github.com/shahdhoss/ecommerce-app-demo.git
+git clone https://github.com/shahdhoss/ecommerce-app-demo.git
 ```
 
 Go to the project directory

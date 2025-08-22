@@ -13,10 +13,12 @@ import 'package:ecommerce_demo/pages/wishlist.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-const apiKey = "AIzaSyDLFaO7XWKnKa9yLHquEByr4YkmijCek9U";
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
+  final apiKey = dotenv.env["google_api_key"]!;
   Gemini.init(apiKey: apiKey, enableDebugging: true);
   runApp(MyApp());
 }

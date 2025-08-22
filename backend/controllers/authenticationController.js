@@ -1,6 +1,7 @@
 const {User} = require("../models/users")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
+require("dotenv").config()
 
 exports.registerUser = async (req,res)=>{
     try{
@@ -8,8 +9,8 @@ exports.registerUser = async (req,res)=>{
         const hashedPassword = await bcrypt.hash(password, 10)
         const user = new User({name, email, password: hashedPassword})
         await user.save()
-        const token = jwt.sign({userId:user._id}, "shahdDetectiveConan", {
-            expiresIn: "30m"
+        const token = jwt.sign({userId:user._id}, process.env.JWT_TOKEN_SECRET, {
+            expiresIn: process.env.JWT_TOKEN_EXPIRY
         })
         return res.status(200).json({token})
     }catch (err){
@@ -29,8 +30,8 @@ exports.loginUser = async (req,res)=>{
         if(!isPasswordMatch){
             return res.status(401).json({error :"Password is incorrect"})
         }
-        const token = jwt.sign({userId:user._id}, "shahdDetectiveConan", {
-            expiresIn: "30m"
+        const token = jwt.sign({userId:user._id}, process.env.JWT_TOKEN_SECRET , {
+            expiresIn: process.env.JWT_TOKEN_EXPIRY
         })
         return res.status(200).json({token})
     }catch(err){
